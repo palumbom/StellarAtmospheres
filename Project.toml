@@ -1,0 +1,4 @@
+name = "StellarAtmospheres"
+uuid = "b683c2a4-e546-4d2a-bd5b-d76733f00fc3"
+authors = ["Michael Palumbo <mlp95@psu.edu>"]
+version = "0.1.0"
