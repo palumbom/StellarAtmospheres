@@ -5,12 +5,10 @@ Contact: mlp95@psu.edu
 """
 
 module StellarAtmospheres
+export Bν, Bλ
 
-# bring in constants
+# bring in constants and thermal stuff
 include("constants.jl")
-
-# define planck functions
-Bν(ν::t, T::t) where t<:Real = 2.0*h*ν^3/c^2 * 1.0/(exp(h*ν/(kB*T)) - 1.0)
-Bλ(λ::t, T::t) where t<:Real = 2.0*h*c^2/λ^5 * 1.0/(exp(h*c/(λ*kB*T)) - 1.0)
+include("thermal.jl")
 
 end # module
