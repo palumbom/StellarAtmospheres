@@ -18,3 +18,11 @@ function Bλ(T::t, λ::AbstractArray{t,1}) where t<:Real
     end
     return out
 end
+
+# wien displacement law (cm and Hz and K)
+λmax(T::t) where t<:Real = 0.290/T
+νmax(T::t) where t<:Real = 5.88e10 * T
+
+# convert λ to ν and ν to λ
+λ2ν(λ::T) where T<:Real = c/λ
+ν2λ(ν::T) where T<:Real = c/ν

@@ -5,10 +5,13 @@ Contact: mlp95@psu.edu
 """
 
 module StellarAtmospheres
-export Bν, Bλ
 
 # bring in constants and thermal stuff
 include("constants.jl")
 include("thermal.jl")
+include("pretty_plots.jl")
+
+# export things
+export Bν, Bλ, λmax, νmax, λ2ν, ν2λ
 
 end # module
