@@ -11,7 +11,7 @@ T = [1000.0, 2000.0, 5000.0, 10000.0, 20000.0]
 ν = range(1e3, 1e17, length=5000) # in Hz
 I = zeros(length(ν), length(T))
 for i in 1:length(T)
-    I[:,i] = Bν(T[i], ν)
+    I[:,i] = Bν.(ν, T[i])
 end
 
 # plot it

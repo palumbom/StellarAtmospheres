@@ -12,6 +12,6 @@ include("thermal.jl")
 include("pretty_plots.jl")
 
 # export things
-export Bν, Bλ, λmax, νmax, λ2ν, ν2λ
+export Bν, Bλ, Bν̃, λmax, νmax, λ2ν, ν2λ, λ2ν̃, ν̃2λ
 
 end # module
