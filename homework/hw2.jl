@@ -18,21 +18,21 @@ end
 # make some plots
 mpl.rc("font", size=14)
 mpl.rc("lines", linewidth=2, linestyle="-")
-mpl.rc("axes", grid=true
-fig = plt.figure("Planck Function", figsize=(4,12))
-ax1 = fig.add_subplot(3, 1, 1)
+mpl.rc("axes", grid=true)
+fig = plt.figure("Planck Function", figsize=(10,5))
+ax1 = fig.add_subplot(1, 3, 1)
 for i in 1:size(Iν̃,2)
     p1 = plot(ν̃, Iν̃[:,i], c=plt.cm.Dark2(i))
 end
 ax1.legend([string(temp) * " K" for temp in T])
 
-ax2 = fig.add_subplot(3, 1, 2)
+ax2 = fig.add_subplot(1, 3, 2)
 for i in 1:size(Iν̃,2)
     p1 = plot(ν̃, Iν̃[:,i], c=plt.cm.Dark2(i))
 end
 ax2.set_yscale("log")
 
-ax3 = fig.add_subplot(3, 1, 3)
+ax3 = fig.add_subplot(1, 3, 3)
 for i in 1:size(Iν̃,2)
     p1 = plot(ν̃, Iν̃[:,i], c=plt.cm.Dark2(i))
 end
