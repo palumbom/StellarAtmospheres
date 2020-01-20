@@ -1,6 +1,23 @@
 # define planck functions
+"""
+    Bν(ν, T)
+
+Compute the specific intensity at frequency ν of a blackbody with temperature T.
+"""
 Bν(ν::t, T::t) where t<:Real = (2.0*h*ν^3/c^2) * one(t)/(exp(h*ν/(kB*T)) - one(t))
+
+"""
+    Bλ(λ, T)
+
+Compute the specific intensity at wavelength λ of a blackbody with temperature T.
+"""
 Bλ(λ::t, T::t) where t<:Real = (2.0*h*c^2/λ^5) * one(t)/(exp(h*c/(λ*kB*T)) - one(t))
+
+"""
+    Bν̃(ν̃, T)
+
+Compute the specific intensity at wavenumber ν̃ of a blackbody with temperature T.
+"""
 Bν̃(ν̃::t, T::t) where t<:Real = (2.0*h*c^2*ν̃^3) * one(t)/(exp(h*c*ν̃/(kB*T)) - one(t))
 
 # wien displacement law (cm and Hz and K)

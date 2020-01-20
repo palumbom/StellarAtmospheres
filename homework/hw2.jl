@@ -6,7 +6,7 @@ using PyPlot; plt = PyPlot; mpl = matplotlib
 
 # array of temperatures and wavenumbers
 T = [3000.0, 7000.0, 10000.0]
-ν̃ = range(0.01, 12.0, length=1000)
+ν̃ = range(0.01, 20.0, length=5000)
 
 # evaluate the planck function
 Iν = zeros(length(ν̃), length(T))
@@ -44,10 +44,11 @@ ax2 = fig.add_subplot(111)
 for i in 1:size(Iν,2)
     p1 = plot(ν̃, Iν[:,i], c=plt.cm.Dark2(i))
 end
-ax2.set_xlim(0.0, 12.0)
 ax2.set_xlabel("Wavenumber " * L"({\rm \mu m}^{-1})")
 ax2.set_ylabel(L"B_\nu \ ({\rm erg}\ {\rm s}^{-1}\ {\rm cm}^{-2}\ {\rm Hz}^{-1}\ {\rm ster}^{-1})")
 ax2.set_yscale("log")
+ax2.set_xlim(0.0, 12.0)
+ax2.set_ylim(1e-15, 1e-3)
 ax2.legend([string(temp) * " K" for temp in T])
 plt.tight_layout()
 fig.savefig(outdir * "hw2_semilog_planck.pdf")
@@ -63,7 +64,8 @@ ax3.set_xlabel("Wavenumber " * L"({\rm \mu m}^{-1})")
 ax3.set_ylabel(L"B_\nu \ ({\rm erg}\ {\rm s}^{-1}\ {\rm cm}^{-2}\ {\rm Hz}^{-1}\ {\rm ster}^{-1})")
 ax3.set_xscale("log")
 ax3.set_yscale("log")
-ax3.set_xlim(10^-1.0, 10^1.08)
+ax3.set_xlim(10^-1.0, 10^1.2)
+ax3.set_ylim(1e-15, 1e-3)
 ax3.legend([string(temp) * " K" for temp in T])
 plt.tight_layout()
 fig.savefig(outdir * "hw2_loglog_planck.pdf")
