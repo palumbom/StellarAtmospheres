@@ -12,3 +12,5 @@ Bν̃(ν̃::t, T::t) where t<:Real = (2.0*h*c^2*ν̃^3) * one(t)/(exp(h*c*ν̃/(
 ν2λ(ν::T) where T<:Real = c/ν
 λ2ν̃(λ::T) where T<:Real = one(T)/λ
 ν̃2λ(ν̃::T) where T<:Real = one(T)/ν̃
+ν̃2ν(ν̃::T) where T<:Real = c*ν̃
+ν2ν̃(ν::T) where T<:Real = ν/c
