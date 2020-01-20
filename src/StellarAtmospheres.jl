@@ -10,8 +10,9 @@ module StellarAtmospheres
 include("constants.jl")
 include("thermal.jl")
 include("pretty_plots.jl")
+include("integrate.jl")
 
 # export things
-export Bν, Bλ, Bν̃, λmax, νmax, λ2ν, ν2λ, λ2ν̃, ν̃2λ, ν̃2ν, ν2ν̃
+export Bν, Bλ, Bν̃, λmax, νmax, λ2ν, ν2λ, λ2ν̃, ν̃2λ, ν̃2ν, ν2ν̃, trap_int
 
 end # module

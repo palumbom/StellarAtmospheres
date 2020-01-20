@@ -68,3 +68,8 @@ ax3.legend([string(temp) * " K" for temp in T])
 plt.tight_layout()
 fig.savefig(outdir * "hw2_loglog_planck.pdf")
 plt.clf()
+
+# integrate the function
+x = range(0.01, 500.0, length=10000)
+y = Bν.(ν̃2ν.(x.*1e4), 7500.0)
+int = trap_int(x, y)
