@@ -1,5 +1,6 @@
 # use packages
 using Pkg; Pkg.activate(".")
+using Revise
 using StellarAtmospheres
 using LaTeXStrings
 using PyPlot; plt = PyPlot; mpl = matplotlib
