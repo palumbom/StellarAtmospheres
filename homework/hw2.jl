@@ -1,7 +1,7 @@
 # use packages
 using Pkg; Pkg.activate(".")
 using Revise
-using StellarAtmospheres
+using StellarAtmospheres; SA = StellarAtmospheres;
 using LaTeXStrings
 using PyPlot; plt = PyPlot; mpl = matplotlib;
 
@@ -19,6 +19,9 @@ for i in 1:length(T)
     Iν[:,i] = Bν.(ν̃2ν.(ν̃.*1e4), T[i])
 end
 
+# make labels for legend
+Tlabels = [string(temp) * " K" for temp in T]
+
 # linlin plot
 fig = plt.figure("Planck Function")
 ax1 = fig.add_subplot(111)
@@ -28,9 +31,9 @@ end
 ax1.set_xlim(0.0, 12.0)
 ax1.ticklabel_format(axis="both", style="sci")
 ax1.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter("%1.0e"))
-ax1.set_xlabel(StellarAtmospheres.ν̃_string())
-ax1.set_ylabel(StellarAtmospheres.Bν_string())
-ax1.legend([string(temp) * " K" for temp in T])
+ax1.set_xlabel(SA.ν̃_string())
+ax1.set_ylabel(SA.Bν_string())
+ax1.legend(Tlabels)
 fig.savefig(outdir * "hw2_planck.pdf")
 plt.clf()
 
@@ -40,12 +43,12 @@ ax2 = fig.add_subplot(111)
 for i in 1:size(Iν,2)
     p1 = plot(ν̃, Iν[:,i], c=plt.cm.Dark2(i))
 end
-ax2.set_xlabel(StellarAtmospheres.ν̃_string())
-ax2.set_ylabel(StellarAtmospheres.Bν_string())
+ax2.set_xlabel(SA.ν̃_string())
+ax2.set_ylabel(SA.Bν_string())
 ax2.set_yscale("log")
 ax2.set_xlim(0.0, 12.0)
 ax2.set_ylim(1e-15, 1e-3)
-ax2.legend([string(temp) * " K" for temp in T])
+ax2.legend(Tlabels)
 fig.savefig(outdir * "hw2_semilog_planck.pdf")
 plt.clf()
 
@@ -55,13 +58,13 @@ ax3 = fig.add_subplot(111)
 for i in 1:size(Iν,2)
     p1 = plot(ν̃, Iν[:,i], c=plt.cm.Dark2(i))
 end
-ax3.set_xlabel(StellarAtmospheres.ν̃_string())
-ax3.set_ylabel(StellarAtmospheres.Bν_string())
+ax3.set_xlabel(SA.ν̃_string())
+ax3.set_ylabel(SA.Bν_string())
 ax3.set_xscale("log")
 ax3.set_yscale("log")
 ax3.set_xlim(10^-1.0, 10^1.2)
 ax3.set_ylim(1e-15, 1e-3)
-ax3.legend([string(temp) * " K" for temp in T])
+ax3.legend(Tlabels)
 fig.savefig(outdir * "hw2_loglog_planck.pdf")
 plt.clf()
 
