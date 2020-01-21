@@ -68,7 +68,10 @@ ax3.legend(Tlabels)
 fig.savefig(outdir * "hw2_loglog_planck.pdf")
 plt.clf()
 
+# analytical integral
+int_true = (2*SA.h/SA.c^3) * (SA.kB/SA.h)^4 * (π^4/15) * 7500.0^4
+
 # integrate the function
-x = range(0.01, 500.0, length=10000)
+x = range(0.01, 100.0, length=10000)
 y = Bν.(ν̃2ν.(x.*1e4), 7500.0)
-int = trap_int(x, y)
+int_num = trap_int(x, y)
