@@ -3,7 +3,11 @@ using Pkg; Pkg.activate(".")
 using Revise
 using StellarAtmospheres
 using LaTeXStrings
-using PyPlot; plt = PyPlot; mpl = matplotlib
+using PyPlot; plt = PyPlot; mpl = matplotlib;
+
+# set up plot output
+outdir = "/Users/michael/Desktop/ASTRO530/figures/"
+mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # array of temperatures and wavenumbers
 T = [3000.0, 7000.0, 10000.0]
@@ -14,14 +18,6 @@ Iν = zeros(length(ν̃), length(T))
 for i in 1:length(T)
     Iν[:,i] = Bν.(ν̃2ν.(ν̃.*1e4), T[i])
 end
-
-# set some matplotlib params for pretty plots
-mpl.rc("font", size=14)
-mpl.rc("lines", linewidth=2, linestyle="-")
-mpl.rc("axes", grid=true)
-mpl.rc("grid", linestyle=":")
-outdir = "/Users/michael/Desktop/ASTRO530/figures/"
-plt.ioff()
 
 # linlin plot
 fig = plt.figure("Planck Function")
@@ -35,7 +31,6 @@ ax1.yaxis.set_major_formatter(mpl.ticker.FormatStrFormatter("%1.0e"))
 ax1.set_xlabel("Wavenumber " * L"({\rm \mu m}^{-1})")
 ax1.set_ylabel(L"B_\nu \ ({\rm erg}\ {\rm s}^{-1}\ {\rm cm}^{-2}\ {\rm Hz}^{-1}\ {\rm ster}^{-1})")
 ax1.legend([string(temp) * " K" for temp in T])
-plt.tight_layout()
 fig.savefig(outdir * "hw2_planck.pdf")
 plt.clf()
 
@@ -51,7 +46,6 @@ ax2.set_yscale("log")
 ax2.set_xlim(0.0, 12.0)
 ax2.set_ylim(1e-15, 1e-3)
 ax2.legend([string(temp) * " K" for temp in T])
-plt.tight_layout()
 fig.savefig(outdir * "hw2_semilog_planck.pdf")
 plt.clf()
 
@@ -68,7 +62,6 @@ ax3.set_yscale("log")
 ax3.set_xlim(10^-1.0, 10^1.2)
 ax3.set_ylim(1e-15, 1e-3)
 ax3.legend([string(temp) * " K" for temp in T])
-plt.tight_layout()
 fig.savefig(outdir * "hw2_loglog_planck.pdf")
 plt.clf()
 
