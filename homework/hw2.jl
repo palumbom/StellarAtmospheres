@@ -3,6 +3,8 @@ using Pkg; Pkg.activate(".")
 using Revise
 using StellarAtmospheres; SA = StellarAtmospheres;
 using LaTeXStrings
+using Conda; # Conda.add("astropy")
+using PyCall; apm = pyimport("astropy.modeling.models"); u = pyimport("astropy.units")
 using PyPlot; plt = PyPlot; mpl = matplotlib;
 
 # set up plot output
@@ -68,10 +70,18 @@ ax3.legend(Tlabels)
 fig.savefig(outdir * "hw2_loglog_planck.pdf")
 plt.clf()
 
-# analytical integral
-int_true = (2*SA.h/SA.c^3) * (SA.kB/SA.h)^4 * (π^4/15) * 7500.0^4
+# compare to astropy
+PyBB = apm.BlackBody(temperature=3000.0 * u.K)(ν̃2ν.(ν̃.*1e4))
 
-# integrate the function
+# analytical integral
+int_true = (2*SA.h/SA.c^3) * (SA.kB/SA.h)^4 * (π^4/15) * 7500.0^4 * 1e-4
+
+# integrate the function simply at first
 x = range(0.01, 100.0, length=10000)
 y = Bν.(ν̃2ν.(x.*1e4), 7500.0)
-int_num = trap_int(x, y)
+int_num1 = trap_int(x, y)
+
+# now use a more complex implementation
+# we need to make an anonymous function with one input
+f = z -> Bν(ν̃2ν.(z.*1e4), 7500.0)
+int_num2, err = trap_int(f, (0.01, 100.0), 10000, err=true)
