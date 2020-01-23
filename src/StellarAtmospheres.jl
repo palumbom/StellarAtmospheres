@@ -10,9 +10,13 @@ module StellarAtmospheres
 include("constants.jl")
 include("axis_strings.jl")
 include("thermal.jl")
+include("transport.jl")
 include("integrate.jl")
 
 # export things
-export Bν, Bλ, Bν̃, λmax, νmax, λ2ν, ν2λ, λ2ν̃, ν̃2λ, ν̃2ν, ν2ν̃, trap_int
+export Bν, Bλ, Bν̃, λmax, νmax,
+       λ2ν, ν2λ, λ2ν̃, ν̃2λ, ν̃2ν,
+       ν2ν̃, trap_int, Sν_lin,
+       Sν_quad, Cν
 
 end # module
