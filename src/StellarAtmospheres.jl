@@ -10,7 +10,6 @@ module StellarAtmospheres
 include("constants.jl")
 include("axis_strings.jl")
 include("thermal.jl")
-include("pretty_plots.jl")
 include("integrate.jl")
 
 # export things
