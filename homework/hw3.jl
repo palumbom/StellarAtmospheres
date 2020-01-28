@@ -3,7 +3,6 @@ using Revise
 using StellarAtmospheres; SA = StellarAtmospheres;
 using LaTeXStrings
 using PyPlot; plt = PyPlot; mpl = matplotlib;
-AA = AbstractArray
 
 # set up plot output
 outdir = "/Users/michael/Desktop/ASTRO530/figures/"
@@ -68,4 +67,30 @@ ax1.set_xlabel("Source Function Quadratic Term " * L"(a_2)")
 ax1.set_ylabel(L"I_\nu^+(0, \mu=1) = \int_0^\infty S_\nu e^{-\tau_\nu}")
 ax1.set_xlim(0, 2.0)
 fig.savefig(outdir*"hw3_quadratic_term.pdf")
+plt.clf(); plt.close()
+
+# plot integration error and integral value as function of number of traps
+nt = Int.(range(10, 1000, length=100))
+τ2 = range(1.0, 100.0, length=100)
+It = zeros(length(nt), length(τ2))
+for i in 1:length(nt)
+    for j in 1:length(τ2)
+        It[i,j]= trap_int(x -> Cν(x, Sν_quad, 1.0, 1.0, 1.0), (0.0, τ2[j]), nt[i])
+    end
+end
+
+# calculate the relative error
+re = log10.(abs.(4.0 .- It)./4.0)
+extent = [0.0,100,10,1000]
+
+# plot it
+fig = plt.figure("Integration Error")#, aspect="equal")
+ax1 = fig.add_subplot(111)
+img = ax1.imshow(re, cmap="plasma", interpolation="nearest", extent=extent, origin="lower")
+cbr = fig.colorbar(img)
+cbr.set_label("log(Relative Integration Error)")
+ax1.set_xlabel(L"\tau_\nu" * " Upper Bound of Integration")
+ax1.set_ylabel("Number of Trapezoids")
+ax1.set_aspect("auto")
+fig.savefig(outdir*"hw3_integration_error.pdf")
 plt.clf(); plt.close()
