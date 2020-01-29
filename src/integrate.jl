@@ -17,7 +17,7 @@ Compute the trapezoidal integral for function f(x) on the range (a,b) using
 ntrap steps. If err is true, calculate the error via asymptotic estimator
 (see wikipedia for summary).
 """
-function trap_int(f::Function, ab::Tuple, ntrap::Int; err::Bool=false)
+function trap_int(f::Function, ab::Tuple{T,T}, ntrap::Int; dx::T=NaN, err::Bool=false) where T<:Real
     @assert ntrap > 1
     @assert ab[2] > ab[1]
 

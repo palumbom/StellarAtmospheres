@@ -44,7 +44,7 @@ plt.clf(); plt.close()
 
 # integrate out the contribution functions
 nt = 10000           # number of trapezoids
-τs = (0.0, 100.0)    # integral bounds for τ
+τs = (0.0, 40.0)    # integral bounds for τ
 I1 = trap_int(x -> Cν(x, Sν_lin, an...), τs, nt)
 I2 = trap_int(x -> Cν(x, Sν_quad, an...), τs, nt)
 
@@ -53,19 +53,23 @@ println(Sν_lin(1.0, an...))
 println(Sν_quad(1.0, an...))
 
 # plot int cont function over source function as a function of a_2
-a2 = range(0, 2.0, length=100)
+a2 = range(-2.0, 2.0, length=100)
 Is = zeros(length(a2))
+EB = zeros(length(a2))
 for i in 1:length(a2)
     Is[i] = trap_int(x -> Cν(x, Sν_quad, 1.0, 1.0, a2[i]), τs, nt)
+    EB[i] = Sν_quad(1.0, 1.0, 1.0, a2[i])
 end
 
 # plot the result
 fig = plt.figure("Contribution Error")
 ax1 = fig.add_subplot(111)
-ax1.plot(a2, Is)
+ax1.plot(a2, Is, label="True Intensity")
+ax1.plot(a2, EB, ls=":", c="k", label="E-B Intensity")
 ax1.set_xlabel("Source Function Quadratic Term " * L"(a_2)")
-ax1.set_ylabel(L"I_\nu^+(0, \mu=1) = \int_0^\infty S_\nu e^{-\tau_\nu}")
-ax1.set_xlim(0, 2.0)
+ax1.set_ylabel(L"I_\nu^+(0, \mu=1)")
+ax1.set_xlim(-2.0, 2.0)
+ax1.legend()
 fig.savefig(outdir*"hw3_quadratic_term.pdf")
 plt.clf(); plt.close()
 
