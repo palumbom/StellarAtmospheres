@@ -3,20 +3,27 @@ using Revise
 using StellarAtmospheres; SA = StellarAtmospheres;
 using LaTeXStrings
 using PyPlot; plt = PyPlot; mpl = matplotlib;
-
-# pycall the exponential function
-using Conda; ENV["CONDA_JL_HOME"] = "/usr/local/anaconda3/envs/conda_jl";
-using PyCall; expn = pyimport("scipy.special").expn;
+import Bridge.expint
 
 # set up plot output
 outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # parameters for integrating expn function
-ntrap = 1000
-ab = (1e-5, 1e5)
+ntrap = range(100, 10000, step=100)
+a = 1e-10
+b = range(1e1, 1e10, length=100)
+
+# allocate memory
+int1 = zeros(100, 100)
+int2 = zeros(100, 100)
+int3 = zeros(100, 100)
 
 # do the integration
-int1 = trap_int(x -> expn(1, x), ab, ntrap=ntrap, logx=true)
-int2 = trap_int(x -> expn(2, x), ab, ntrap=ntrap, logx=true)
-int3 = trap_int(x -> expn(3, x), ab, ntrap=ntrap, logx=true)
+for c in CartesianIndices(int1)
+    i,j = Tuple(c)
+    int1[c] = trap_int(x -> expint(1, x), (a,b[i]), ntrap=ntrap[j], logx=true))
+    int2[c] = trap_int(x -> expint(2, x), (a,b[i]), ntrap=ntrap[j], logx=true))
+    int3[c] = trap_int(x -> expint(3, x), (a,b[i]), ntrap=ntrap[j], logx=true))
+end
+

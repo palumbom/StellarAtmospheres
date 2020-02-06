@@ -30,11 +30,9 @@ function trap_int(f::Function, ab::Tuple{T,T}; ntrap::Int=NaN, logx::Bool=false,
     # calculate dx
     dx = x[2:end] .- x[1:end-1]
 
-    # get y-array
+    # get y-array & evaluate integral
     y = f.(x)
     num = y[2:end] .+ y[1:end-1]
-
-    # evaluate integral
     int = sum(dx .* num ./ 2.0)
 
     # evaluate error
