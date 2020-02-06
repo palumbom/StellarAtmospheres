@@ -12,7 +12,7 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 # parameters for integrating expn function
 ntrap = range(10, 10000, step=100)
 a = 1e-10
-b = range(1e1, 1e4, length=100)
+b = range(1e2, 1e5, length=100)
 
 # allocate memory
 int1 = zeros(length(ntrap), length(b))
@@ -32,7 +32,7 @@ int2_err = log10.(abs.(int1 .- 0.5) ./ 0.5)
 int3_err = log10.(abs.(int1 .- (1.0/3.0)) ./ (1.0/3.0))
 
 # plot it
-extent = [1e1, 1e4, 10, 1000]
+extent = [b[1], b[end], ntrap[1], ntrap[end]]
 fig = plt.figure("Integration Error")
 ax1 = fig.add_subplot(111)
 img = ax1.imshow(int1_err, cmap="plasma", extent=extent,
