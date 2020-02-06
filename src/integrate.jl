@@ -9,7 +9,6 @@ function trap_int(x::AbstractArray{T,1}, y::AbstractArray{T,1}) where T<:Real
     return sum(dx .* num ./ 2.0)
 end
 
-
 """
     trap_int(f, ab, ntrap; err=false)
 
@@ -17,12 +16,18 @@ Compute the trapezoidal integral for function f(x) on the range (a,b) using
 ntrap steps. If err is true, calculate the error via asymptotic estimator
 (see wikipedia for summary).
 """
-function trap_int(f::Function, ab::Tuple{T,T}, ntrap::Int; dx::T=NaN, err::Bool=false) where T<:Real
+function trap_int(f::Function, ab::Tuple{T,T}, ntrap::Int; logx::Bool=false, err::Bool=false) where T<:Real
     @assert ntrap > 1
     @assert ab[2] > ab[1]
 
     # get x-array
-    x = range(ab[1], ab[2], length=ntrap)
+    if logx
+        x = logspace(ab[1], ab[2], length=ntrap)
+    else
+        x = range(ab[1], ab[2], length=ntrap)
+    end
+
+    # calculate dx
     dx = x[2:end] .- x[1:end-1]
 
     # get y-array

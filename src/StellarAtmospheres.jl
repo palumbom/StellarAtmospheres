@@ -8,6 +8,7 @@ module StellarAtmospheres
 
 # bring in constants and thermal stuff
 include("constants.jl")
+include("utils.jl")
 include("axis_strings.jl")
 include("thermal.jl")
 include("transport.jl")
