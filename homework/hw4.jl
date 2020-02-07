@@ -78,4 +78,4 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 # int2_log_err = log10(abs(int2_log - 0.5) / 0.5); @show int2_log_err
 # int3_log_err = log10(abs(int3_log - (1/3)) / (1/3)); @show int3_log_err
 
-int_test = trap_int(x -> x*(expint(1, x)), (0.001,2e1), ntrap=300, logx=true)
+int_test = trap_int(x -> x*(expint(1, x)), (1e-8,1e3), ntrap=300, logx=true)
