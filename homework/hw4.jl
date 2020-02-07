@@ -10,20 +10,23 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # parameters for integrating expn function
-ntrap = range(2, 500, step=1)
+ntrap = range(2, 100, step=1)
 a = 1e-10
-b = range(0.1, 1e2, length=1200)
+b = range(0.1, 1e2, length=5000)
 
 # allocate memory
 int1 = zeros(length(ntrap), length(b))
+# int2 = zeros(length(ntrap), length(b))
 
 # do the integration
 for c in CartesianIndices(int1)
     i,j = Tuple(c)
     int1[c] = trap_int(x -> x*expint(1, x), (a,b[j]), ntrap=ntrap[i], logx=true)
+    # int2[c] = trap_int(x -> x*expint(2, x), (a,b[j]), ntrap=ntrap[i], logx=true)
 end
 
 int1_err = log10.(abs.(int1 .- 1.0) ./ 1.0)
+# int2_err = log10.(abs.(int2 .- 1.0) ./ 1.0)
 
 # plot it
 extent = [b[1], b[end], ntrap[1], ntrap[end]]
