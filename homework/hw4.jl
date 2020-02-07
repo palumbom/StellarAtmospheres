@@ -1,5 +1,6 @@
 using Pkg; Pkg.activate(".")
 using Revise
+using BenchmarkTools
 using StellarAtmospheres; SA = StellarAtmospheres;
 using LaTeXStrings
 using PyPlot; plt = PyPlot; mpl = matplotlib;
@@ -40,4 +41,7 @@ fig.savefig(outdir*"hw4_expn1_error.pdf")
 plt.clf(); plt.close()
 
 # best int
-test = trap_int(x -> x*expint(1, x), (1e-10,1e2), ntrap=100, logx=true)
+am = argmin(int1_err)
+ab = (1e-10, b[am[2]])
+ntrap = ntrap[am[1]]
+@benchmark trap_int(x -> x*expint(1, x), ab, ntrap=ntrap, logx=true)
