@@ -10,8 +10,8 @@ Compute logarithmically-spaced bins between a and b.
 function logspace(a::T, b::T; length::Int=NaN) where T<:Real
     @assert b > a
     @assert !isnan(length)
-    return exp10.(range(log10(a), log10(b), length=length))
-    # return (exp10(x) for x in range(log10(a), log10(b), length=length))
+    return exp.(range(log(a), log(b), length=length))
+    # return (exp(x) for x in range(log(a), log(b), length=length))
 end
 
 """
