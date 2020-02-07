@@ -39,9 +39,6 @@ ax1.set_aspect("auto")
 fig.savefig(outdir*"hw4_expn1_error.pdf")
 plt.clf(); plt.close()
 
-# find best result
-am1 = argmin(int1_err); println(int1[am1])
-
 # now do the transformation
 u = range(-10, 2.5, length=100)
 ab = (-1e5, 1e5)
@@ -56,8 +53,8 @@ integrand3 = expint_log.(3, u)
 fig = plt.figure("Integrand")
 ax1 = fig.add_subplot(111)
 img = ax1.plot(u, integrand1, "-", label=L"n=1")
-img = ax1.plot(u, integrand2, "-.", label=L"n=2")
-img = ax1.plot(u, integrand3, ":", label=L"n=3")
+img = ax1.plot(u, integrand2, "--", label=L"n=2")
+img = ax1.plot(u, integrand3, "-.", label=L"n=3")
 ax1.set_xlabel(L"u")
 ax1.set_ylabel(L"\log(10)10^u E_n(10^u)")
 ax1.set_xlim(minimum(u), maximum(u))
@@ -67,7 +64,16 @@ ax1.legend()
 fig.savefig(outdir*"hw4_integrand.pdf")
 plt.clf(); plt.close()
 
+# find where integrand tanks down to small
+a = u[findfirst((integrand1 .- 1e-10) .> 0)]
+b = u[findlast((integrand1 .- 1e-10) .> 0)]
+
 # do the new integral
-for i in eachindex(u)
-    int1_log[i] = trap_int(x -> expint_log(1, u[i]), ab, ntrap=100, logx=false)
-end
+int1_log = trap_int(x -> expint_log(1, x), (a,b), ntrap=1000, logx=false)
+int2_log = trap_int(x -> expint_log(2, x), (a,b), ntrap=1000, logx=false)
+int3_log = trap_int(x -> expint_log(3, x), (a,b), ntrap=1000, logx=false)
+
+# calculate relative errors
+int1_log_err = log10(abs(int1_log - 1.0) / 1.0); @show int1_log_err
+int2_log_err = log10(abs(int2_log - 0.5) / 0.5); @show int2_log_err
+int3_log_err = log10(abs(int3_log - (1/3)) / (1/3)); @show int3_log_err

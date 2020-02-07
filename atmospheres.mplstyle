@@ -1,5 +1,5 @@
 font.size                : 14
-lines.linewidth          : 2
+lines.linewidth          : 2.2
 lines.linestyle          : -
 axes.grid                : True
 grid.linestyle           : :
