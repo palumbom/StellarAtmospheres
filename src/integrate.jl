@@ -22,7 +22,7 @@ function trap_int(f::Function, ab::Tuple{T,T}; ntrap::Int=NaN, logx::Bool=false,
 
     # get x-array
     if logx
-        x = logspace(ab[1], ab[2], length=ntrap)
+        x = range(log(ab[1]), log(ab[2]), length=ntrap)
         y = f.(exp.(x))
     else
         x = range(ab[1], ab[2], length=ntrap)
