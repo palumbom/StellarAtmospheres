@@ -21,7 +21,7 @@ int1 = zeros(length(ntrap), length(b))
 # do the integration
 for c in CartesianIndices(int1)
     i,j = Tuple(c)
-    int1[c] = trap_int(x -> x*expint(1, x), (a,b[j]), ntrap=ntrap[i], logx=true)
+    int1[c] = trap_int(x -> expint(1, x), (a,b[j]), ntrap=ntrap[i], logx=true)
 end
 
 int1_err = log10.(abs.(int1 .- 1.0) ./ 1.0)
@@ -44,4 +44,10 @@ plt.clf(); plt.close()
 am = argmin(int1_err)
 ab = (1e-10, b[am[2]])
 ntrap = ntrap[am[1]]
-@benchmark trap_int(x -> x*expint(1, x), ab, ntrap=ntrap, logx=true)
+@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true)
+
+# calculate H0
+τs = (1e-10, 50.0)
+an = [1.0, 1.0, 1.0]
+H0 = Hν₀(τs, Sν, an..., ntrap=300)
+
