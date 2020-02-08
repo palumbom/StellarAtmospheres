@@ -47,7 +47,12 @@ ntrap = ntrap[am[1]]
 println(@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true))
 
 # calculate H0
-τs = (1e-10, 50.0)
+τs = (1e-10, 100.0)
 an = [1.0, 1.0, 1.0]
-H0 = Hν₀(τs, Sν, an..., ntrap=300)
+Ha = Hν₀(τs, an..., ntrap=1000)   # integrate w/ expint
+Hb = Hν₀(an..., ntrap=1000)       # integrate over emergent intensity
+Hd = HνEB(an...)                  # Eddington-Barbier approx
 
+@show Ha
+@show Hb
+@show Hd
