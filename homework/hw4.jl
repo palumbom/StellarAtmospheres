@@ -49,7 +49,7 @@ println(@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true))
 # compare Hν(O) calculated by different means
 τs = (1e-10, 100.0)
 a01 = [1.0, 1.0]
-a2 = range(-1.0, 1.0, length=100)
+a2 = range(-0.1, 0.1, length=100)
 
 # compute via expint
 Ha = similar(a2)
@@ -72,11 +72,12 @@ end
 # now visualize the result
 fig = plt.figure("Emergent Flux")
 ax1 = fig.add_subplot(111)
-ax1.plot(a2, Ha, "k-", label="Exponential Integral")
-ax1.plot(a2, Hb, "k-.", label="Emergent Intensity")
-ax1.plot(a2, Hd, "k:", label="EB Approximation")
-ax1.set_xlabel("Quadratic Coefficient")
-ax1.set_ylabel("Eddington Flux")
+ax1.plot(a2, Ha, "k-", label=L"\frac{1}{2} \int_0^\infty S_\nu (\tau_\nu) E_2(t_\nu) dt_\nu")
+ax1.plot(a2, Hb, "k-.", label=L"\frac{1}{2} \int_0^1 I_\nu(0,\mu)\mu d\mu")
+ax1.plot(a2, Hd, "k:", label=L"\frac{1}{2} S_\nu(\tau_\nu = \frac{2}{3})")
+ax1.set_xlabel("Quadratic Coefficient " * L"a_2")
+ax1.set_ylabel(L"H_\nu(0)")
 ax1.set_xlim(a2[1], a2[end])
+ax1.legend()
 fig.savefig(outdir*"hw4_eddington_flux.pdf")
 plt.clf(); plt.close()
