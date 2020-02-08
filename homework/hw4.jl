@@ -46,13 +46,37 @@ ab = (1e-10, b[am[2]])
 ntrap = ntrap[am[1]]
 println(@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true))
 
-# calculate H0
+# compare Hν(O) calculated by different means
 τs = (1e-10, 100.0)
-an = [1.0, 1.0, 1.0]
-Ha = Hν₀(τs, an..., ntrap=1000)   # integrate w/ expint
-Hb = Hν₀(an..., ntrap=1000)       # integrate over emergent intensity
-Hd = HνEB(an...)                  # Eddington-Barbier approx
+a01 = [1.0, 1.0]
+a2 = range(-1.0, 1.0, length=100)
 
-@show Ha
-@show Hb
-@show Hd
+# compute via expint
+Ha = similar(a2)
+for i in eachindex(a2)
+    Ha[i] = Hν₀(τs, a01..., a2[i], ntrap=1000)
+end
+
+# compute via integration Iν(0,μ)*μ dμ
+Hb = similar(a2)
+for i in eachindex(a2)
+    Hb[i] = Hν₀(a01..., a2[i], ntrap=1000)
+end
+
+# compute via EB approx for Hν(0)
+Hd = similar(a2)
+for i in eachindex(a2)
+    Hd[i] = HνEB(a01..., a2[i])
+end
+
+# now visualize the result
+fig = plt.figure("Emergent Flux")
+ax1 = fig.add_subplot(111)
+ax1.plot(a2, Ha, "k-", label="Exponential Integral")
+ax1.plot(a2, Hb, "k-.", label="Emergent Intensity")
+ax1.plot(a2, Hd, "k:", label="EB Approximation")
+ax1.set_xlabel("Quadratic Coefficient")
+ax1.set_ylabel("Eddington Flux")
+ax1.set_xlim(a2[1], a2[end])
+fig.savefig(outdir*"hw4_eddington_flux.pdf")
+plt.clf(); plt.close()
