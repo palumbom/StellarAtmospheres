@@ -44,7 +44,7 @@ plt.clf(); plt.close()
 am = argmin(int1_err)
 ab = (1e-10, b[am[2]])
 ntrap = ntrap[am[1]]
-@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true)
+println(@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true))
 
 # calculate H0
 τs = (1e-10, 50.0)

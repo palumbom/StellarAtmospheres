@@ -30,14 +30,12 @@ function trap_int(f::Function, ab::Tuple{T,T}; ntrap::Int=NaN, logx::Bool=false,
     end
 
     # evaluate integral
-    int = sum(diff(x) .* asum(y))/2.0
-
-    # evaluate error
-    if err
+    if !err
+        return sum(diff(x) .* asum(y))/2.0
+    else
         db = (y[end] - y[end-1])/(x[end] - x[end-1])
         da = (y[2] - y[1])/(x[2] - x[1])
         err = -((ab[2] - ab[1])^3 / (12*ntrap^2)) * (db - da)
-        return int, err
+        return sum(diff(x) .* asum(y))/2.0, err
     end
-    return int
 end
