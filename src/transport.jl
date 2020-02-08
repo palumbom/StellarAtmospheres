@@ -76,14 +76,14 @@ with coefficients a_n. Use a trapezoidal integrator with ntrap trapezoids.
 Source function coefficients should be passed as multiple arguments or a
 splatted array.
 """
-function Hν₀(an::T...; ntrap::Int=NaN, EB::Bool=true) where T<:Real
+function Hν₀(an::T...; ntrap::Int=NaN, EB::Bool=true, logx::Bool=false) where T<:Real
     @assert !isnan(ntrap)
     μs = (1e-10, 1.0)
     if EB
-        return 0.5 * trap_int(x -> x*IνEB(x, an...), μs, ntrap=ntrap)
+        return 0.5 * trap_int(x -> x*IνEB(x, an...), μs, ntrap=ntrap, logx=logx)
     else
         τs = (1e-10, 1000.0)
-        return 0.5 * trap_int(x -> x*Iν₀(x, τs, an..., ntrap=ntrap), μs, ntrap=ntrap)
+        return 0.5 * trap_int(x -> x*Iν₀(x, τs, an..., ntrap=ntrap), μs, ntrap=ntrap, logx=logx)
     end
 end
 

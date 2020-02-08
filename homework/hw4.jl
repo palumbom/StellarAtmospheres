@@ -48,8 +48,14 @@ println(@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true))
 
 # compare Hν(O) calculated by different means
 τs = (1e-10, 100.0)
+an = [1.0, 1.0, 1.0]
+Ha = Hν₀(τs, an..., ntrap=1000); @show Ha
+Hb = Hν₀(an..., ntrap=1000); @show Hb
+Hd = HνEB(an...); @show Hd
+
+# compare Hν(O) calculated by different means
 a01 = [1.0, 1.0]
-a2 = range(-0.1, 0.1, length=100)
+a2 = range(-0.25, 0.25, length=100)
 
 # compute via expint
 Ha = similar(a2)
@@ -72,12 +78,27 @@ end
 # now visualize the result
 fig = plt.figure("Emergent Flux")
 ax1 = fig.add_subplot(111)
-ax1.plot(a2, Ha, "k-", label=L"\frac{1}{2} \int_0^\infty S_\nu (\tau_\nu) E_2(t_\nu) dt_\nu")
-ax1.plot(a2, Hb, "k-.", label=L"\frac{1}{2} \int_0^1 I_\nu(0,\mu)\mu d\mu")
-ax1.plot(a2, Hd, "k:", label=L"\frac{1}{2} S_\nu(\tau_\nu = \frac{2}{3})")
+ax1.plot(a2, Ha, "k-", label="a.) " * L"\frac{1}{2} \int_0^\infty S_\nu (\tau_\nu) E_2(t_\nu) dt_\nu")
+ax1.plot(a2, Hb, "k-.", label="b.) " * L"\frac{1}{2} \int_0^1 I_\nu(0,\mu)\mu d\mu")
+ax1.plot(a2, Hd, "k:", label="d.) " * L"\frac{1}{4} S_\nu(\tau_\nu = \frac{2}{3})")
 ax1.set_xlabel("Quadratic Coefficient " * L"a_2")
 ax1.set_ylabel(L"H_\nu(0)")
 ax1.set_xlim(a2[1], a2[end])
 ax1.legend()
 fig.savefig(outdir*"hw4_eddington_flux.pdf")
+plt.clf(); plt.close()
+
+# get the error from EB
+err = Ha .- Hd
+ea2 = (5.0/36.0) .* a2
+
+# plot the error
+fig = plt.figure("EB Error")
+ax1 = fig.add_subplot(111)
+ax1.plot(a2, ea2, "r:", label=L"5a_2/36", zorder=2)
+ax1.plot(a2, err, "k-", lw=3.0, label=L"H_\nu^{\rm true}(0) - H_\nu^{\rm EB}(0)", zorder=1)
+ax1.set_xlabel("Quadratic Coefficient " * L"a_2")
+ax1.set_ylabel(L"\Delta H_\nu(0)")
+ax1.legend()
+fig.savefig(outdir*"hw4_EB_error.pdf")
 plt.clf(); plt.close()
