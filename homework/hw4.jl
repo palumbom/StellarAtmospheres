@@ -45,6 +45,12 @@ am = argmin(int1_err)
 ab = (1e-10, b[am[2]])
 ntrap = ntrap[am[1]]
 println(@benchmark trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true))
+println()
+
+i1 = trap_int(x -> expint(1, x), ab, ntrap=ntrap, logx=true); @show i1
+i2 = trap_int(x -> expint(2, x), ab, ntrap=ntrap, logx=true); @show i2
+i3 = trap_int(x -> expint(3, x), ab, ntrap=ntrap, logx=true); @show i3
+println()
 
 # compare Hν(O) calculated by different means
 τs = (1e-10, 100.0)
