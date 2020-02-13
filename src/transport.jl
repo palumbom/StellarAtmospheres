@@ -81,7 +81,7 @@ end
 
 function ℱτ(Sν::Function, τ::T, τs::Tuple{T,T}, an::T...; Teff::T=NaN, ν::AA{T,1}=Array{T,1}(), ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
-    return trap_int(ν, ℱντ(Sν, τ, τs, an..., Teff=Teff, ν=ν, ntrap=ntrap))
+    return trap_int(ν, ℱντ(Sν, τ, τs, an..., Teff=Teff, ν=ν, ntrap=ntrap), logx=true)
 end
 
 """
