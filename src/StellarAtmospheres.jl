@@ -23,6 +23,6 @@ export Bν, Bλ, Bν̃, λmax, νmax,
        λ2ν, ν2λ, λ2ν̃, ν̃2λ, ν̃2ν,
        ν2ν̃, trap_int, SνPoly,
        SνPlanck, Cν, Iν₀, IνEB,
-       ℱν₀, Hν₀, HνEB, Tτ
+       ℱν₀, ℱντ, ℱτ, Hν₀, HνEB
 
 end # module

@@ -69,6 +69,21 @@ function ℱν₀(Sν::Function, τs::Tuple{T,T}, an::T...; Teff::T=NaN, ν::AA{
     return (2.0 * π) * trap_int(f, τs, ntrap=ntrap, logx=true)
 end
 
+function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}, an::T...; Teff::T=NaN, ν::AA{T,1}=Array{T,1}(), ntrap::Int=NaN) where T<:Real
+    @assert τ[1] <= τ <= τs[2]
+    @assert !isnan(ntrap)
+    f1 = x -> Sν(x, an..., ν=ν, Teff=Teff) * expint(2, abs(x - τs[1]))
+    f2 = x -> Sν(x, an..., ν=ν, Teff=Teff) * expint(2, abs(τs[1] - x))
+    ugt = trap_int(f1, (τ, τs[2]), ntrap=ntrap, logx=true)
+    dgt = trap_int(f2, (τs[1], τ), ntrap=ntrap, logx=true)
+    return (2.0 * π) * (ugt - dgt)
+end
+
+function ℱτ(Sν::Function, τ::T, τs::Tuple{T,T}, an::T...; Teff::T=NaN, ν::AA{T,1}=Array{T,1}(), ntrap::Int=NaN) where T<:Real
+    @assert !isnan(ntrap)
+    return trap_int(ν, ℱντ(Sν, τ, τs, an..., Teff=Teff, ν=ν, ntrap=ntrap))
+end
+
 """
     Hν₀(τs::Tuple, an...; ntrap=NaN)
 
