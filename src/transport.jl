@@ -1,32 +1,48 @@
 """
-    Sν(τ, an...)
+    SνPoly(τ, an...)
 
-Compute the source function at τ with coefficients a_n.
+Compute the source function at τ as a polynomial expansion with
+coefficients a_n.
 Coefficients should be passed as multiple arguments or a splatted array.
 """
-function Sν(τ::T, an::Vararg{T,N}) where {T<:Real, N}
+function SνPoly(τ::T, an::Vararg{T,N}; kwargs...) where {T<:Real, N}
     return sum([an[n] * τ^(n-1) for n in 1:N])
 end
 
 """
-    Cν(τ, an...)
+    SνPlanck(τ, ν, Teff=NaN)
 
-Compute the contribution function at τ with the specified source function and
-coefficients a_n.
-Coefficients should be passed as multiple arguments or a splatted array.
+Compute the source function at τ and ν as the Planck Function with Teff.
 """
-Cν(τ::T, an::T...) where T<:Real = Sν(τ, an...) * exp(-τ)
-Cν(τ::T, μ::T, an::T...) where T<:Real = Sν(τ, an...) * exp(-τ/μ) / μ
+function SνPlanck(τ::T, an::Vararg{T}; Teff::T=NaN, ν::AA{T,1}=Array{T,1}()) where T<:Real
+    @assert !isempty(ν)
+    @assert !isnan(Teff)
+    Ts = Tτ(τ, Teff=Teff)
+    return Bν.(ν, Ts)
+end
 
 """
-    Iν₀(μ, an...)
+    Cν(τ, an...; μ=1.0, Teff, ν)
+
+Compute the contribution function at optical depth τ and and disk position
+μ with the specified source function. For a polynomial Sν, coefficients
+an... must be passed. For Planck Function, an effective temperature and an
+array of frequencies must be passed.
+"""
+function Cν(Sν::Function, τ::T, an::T...; μ::T=1.0, Teff::T=NaN, ν::AA{T,1}=Array{T,1}()) where T<:Real
+    return Sν(τ, an..., ν=ν, Teff=Teff) * exp(-τ/μ)/μ
+end
+
+"""
+    Iν₀(μ, τs, an...)
 
 Compute the emergent intensity at μ by integration.
 Coefficients should be passed as multiple arguments or a splatted array.
 """
-function Iν₀(μ::T, τs::Tuple{T,T}, an::T...; ntrap::Int=NaN) where T<:Real
+function Iν₀(Sν::Function, μ::T, τs::Tuple{T,T}, an::T...; Teff::T=NaN, ν::AA{T,1}=Array{T,1}(), ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
-    return trap_int(x -> Cν(x, μ, an...), τs, ntrap=ntrap, logx=true)
+    f = x -> Cν(Sν, x, an..., Teff=Teff, ν=ν, μ=μ)
+    return trap_int(f, τs, ntrap=ntrap, logx=true)
 end
 
 """
@@ -35,8 +51,8 @@ end
 Compute the emergent intensity at μ using the Eddington-Barbier approximation.
 Coefficients should be passed as multiple arguments or a splatted array.
 """
-function IνEB(μ::T, an::T...) where T<:Real
-    return Sν(μ, an...)
+function Iν₀(μ::T, an::T...) where T<:Real
+    return SνPoly(μ, an...)
 end
 
 """
@@ -47,9 +63,9 @@ source function Sν with coefficients a_n. Use a trapezoidal integrator with
 ntrap trapezoids and logarithmically-spaced gridpoints. Source function
 coefficients should be passed as multiple arguments or a splatted array.
 """
-function ℱν₀(τs::Tuple{T,T}, an::T...; ntrap::Int=NaN) where T<:Real
+function ℱν₀(Sν::Function, τs::Tuple{T,T}, an::T...; Teff::T=NaN, ν::AA{T,1}=Array{T,1}(), ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
-    f = x -> Sν(x, an...) * expint(2, x)
+    f = x -> Sν(x, an..., ν=ν, Teff=Teff) * expint(2, x)
     return (2.0 * π) * trap_int(f, τs, ntrap=ntrap, logx=true)
 end
 
@@ -62,9 +78,9 @@ Use a trapezoidal integrator with ntrap trapezoids and logarithmically-spaced
 gridpoints. Source function coefficients should be passed as multiple
 arguments or a splatted array.
 """
-function Hν₀(τs::Tuple{T,T}, an::T...; ntrap::Int=NaN) where T<:Real
+function Hν₀(Sν::Function, τs::Tuple{T,T}, an::T...; Teff::T=NaN, ν::AA{T,1}=Array{T,1}(), ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
-    return ℱν₀(τs, an..., ntrap=ntrap)/(4.0 * π)
+    return ℱν₀(Sν, τs, an..., ν=ν, Teff=Teff, ntrap=ntrap)/(4.0 * π)
 end
 
 """
@@ -76,14 +92,15 @@ with coefficients a_n. Use a trapezoidal integrator with ntrap trapezoids.
 Source function coefficients should be passed as multiple arguments or a
 splatted array.
 """
-function Hν₀(an::T...; ntrap::Int=NaN, EB::Bool=true, logx::Bool=false) where T<:Real
+function Hν₀(Sν::Function, an::T...; τs::Tuple{T,T}=(1e-10, 1000.0), μs::Tuple{T,T}=(1e-10, 1.0), Teff::T=NaN, ν::AA{T,1}=Array{T,1}(), ntrap::Int=NaN, EB::Bool=true, logx::Bool=true) where T<:Real
     @assert !isnan(ntrap)
-    μs = (1e-10, 1.0)
+    @assert μs[1] >= 0.0
     if EB
+        if Sν == SνPlanck println("EB approx is frequency-independent") end
         return 0.5 * trap_int(x -> x*IνEB(x, an...), μs, ntrap=ntrap, logx=logx)
     else
-        τs = (1e-10, 1000.0)
-        return 0.5 * trap_int(x -> x*Iν₀(x, τs, an..., ntrap=ntrap), μs, ntrap=ntrap, logx=logx)
+        f = x -> x*Iν₀(Sν, x, τs, an..., Teff=Teff, ν=ν, ntrap=ntrap)
+        return 0.5 * trap_int(f, μs, ntrap=ntrap, logx=logx)
     end
 end
 
@@ -94,6 +111,6 @@ Compute the first moment of intensity (as defined in Rutten) via the
 Eddington-Barbier approximation for Hν(0). Source function coefficients
 should be passed as multiple arguments or a splatted array.
 """
-function HνEB(an::T...) where T<:Real
+function Hν₀(an::T...) where T<:Real
     return 0.25 * Sν((2.0/3.0), an...)
 end

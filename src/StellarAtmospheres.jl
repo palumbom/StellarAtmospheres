@@ -6,6 +6,9 @@ Contact: mlp95@psu.edu
 
 module StellarAtmospheres
 
+# abbreviate AbstractArray
+AA = AbstractArray
+
 # bring in constants and thermal stuff
 include("constants.jl")
 include("utils.jl")
@@ -18,8 +21,8 @@ include("transport.jl")
 # export things
 export Bν, Bλ, Bν̃, λmax, νmax,
        λ2ν, ν2λ, λ2ν̃, ν̃2λ, ν̃2ν,
-       ν2ν̃, trap_int, Sν, Cν,
-       Iν₀, IνEB, ℱν₀, Hν₀,
-       HνEB
+       ν2ν̃, trap_int, SνPoly,
+       SνPlanck, Cν, Iν₀, ℱν₀,
+       Hν₀, Tτ
 
 end # module

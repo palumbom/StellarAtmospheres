@@ -20,6 +20,13 @@ Compute the specific intensity at wavenumber ν̃ of a blackbody with temperatur
 """
 Bν̃(ν̃::t, T::t) where t<:Real = (2.0*h*c^2*ν̃^3) * one(t)/(exp(h*c*ν̃/(kB*T)) - one(t))
 
+
+function Tτ(τ::T; Teff::T=NaN) where T<:Real
+    @assert !isnan(Teff)
+    return Teff * (0.75 * (τ + (2.0/3.0)))^0.25
+end
+
+
 # wien displacement law (cm and Hz and K)
 λmax(T::t) where t<:Real = 0.290/T
 νmax(T::t) where t<:Real = 5.88e10 * T
