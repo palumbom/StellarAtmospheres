@@ -96,7 +96,7 @@ function Hν₀(Sν::Function, an::T...; τs::Tuple{T,T}=(1e-10, 1000.0), μs::T
     @assert !isnan(ntrap)
     @assert μs[1] >= 0.0
     if EB
-        if Sν == SνPlanck println("EB approx is frequency-independent") end
+        if Sν == SνPlanck println("approx is frequency-independent") end
         return 0.5 * trap_int(x -> x*IνEB(x, an...), μs, ntrap=ntrap, logx=logx)
     else
         f = x -> x*Iν₀(Sν, x, τs, an..., Teff=Teff, ν=ν, ntrap=ntrap)
@@ -111,6 +111,6 @@ Compute the first moment of intensity (as defined in Rutten) via the
 Eddington-Barbier approximation for Hν(0). Source function coefficients
 should be passed as multiple arguments or a splatted array.
 """
-function Hν₀(an::T...) where T<:Real
-    return 0.25 * Sν((2.0/3.0), an...)
+function HνEB(an::T...) where T<:Real
+    return 0.25 * SνPoly((2.0/3.0), an...)
 end
