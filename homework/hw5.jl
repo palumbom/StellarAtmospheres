@@ -13,7 +13,7 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 ν̃ = range(0.01, 15.0, length=500)
 ν = ν̃2ν.(ν̃.*1e4)
 T = 8700.0
-τs = (1e-10, 50.0)
+τs = (1e-2, 100.0)
 
 # calculate the emergent flux
 F1 = ℱν₀(SνPlanck, τs, Teff=T, ν=ν, ntrap=500)
@@ -40,7 +40,7 @@ fig = plt.figure()
 ax1 = fig.add_subplot(111)
 for i in eachindex(τ)
     lab = L"\tau=\ " * string(τ[i])
-    ax1.plot(ν̃, ℱντ(SνPlanck, τ[i], τs, Teff=T, ν=ν, ntrap=2000), label=lab)
+    ax1.plot(ν̃, ℱντ(SνPlanck, τ[i], τs, Teff=T, ν=ν, ntrap=1000), label=lab)
 end
 ax1.set_xlabel(L"\tilde{\nu}\ (\mu{\rm m}^{-1})")
 ax1.set_ylabel(L"\mathcal{F}_\nu (\tau)\ ({\rm erg/s/cm}^2{\rm /Hz/ster})")
@@ -48,8 +48,6 @@ ax1.set_ylabel(L"\mathcal{F}_\nu (\tau)\ ({\rm erg/s/cm}^2{\rm /Hz/ster})")
 ax1.legend(ncol=2)
 fig.savefig(outdir * "hw5_F_nu_tau_8777.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
-
-ℱτ(SνPlanck, 1.0, τs, Teff=T, ν=ν, ntrap=1000)
 
 # integrate ℱντ over ν
 Fτs = similar(τ)

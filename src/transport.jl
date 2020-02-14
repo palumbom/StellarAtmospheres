@@ -43,7 +43,7 @@ Coefficients should be passed as multiple arguments or a splatted array.
 function Iν₀(Sν::Function, μ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
     f = x -> Cν(Sν, x, an=an, Teff=Teff, ν=ν, μ=μ)
-    return trap_int_1D(f, τs, ntrap=ntrap, logx=true)
+    return trap_int(f, τs, ntrap=ntrap, logx=true)
 end
 
 """
@@ -67,7 +67,7 @@ coefficients should be passed as multiple arguments or a splatted array.
 function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
     f1 = x -> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x)
-    return (2.0 * π) .* trap_int_2D(f1, τs, ntrap=ntrap, logx=false)
+    return (2.0 * π) .* trap_int(f1, τs, ntrap=ntrap, logx=false)
 end
 
 
@@ -77,14 +77,14 @@ function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}
 
     f1 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x - τ)
     f2 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, τ - x)
-    ugtν = trap_int_2D(f1, (τ, τs[2]), ntrap=ntrap, logx=false)
-    dgtν = trap_int_2D(f2, (τs[1], τ), ntrap=ntrap, logx=false)
+    ugtν = trap_int(f1, (τ, τs[2]), ntrap=ntrap, logx=true)
+    dgtν = trap_int(f2, (τs[1], τ), ntrap=ntrap, logx=false)
     return (2.0 * π) .* (ugtν .- dgtν)
 end
 
 function ℱτ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
-    return trap_int_1D(ν, ℱντ(Sν, τ, τs, an=an, Teff=Teff, ν=ν, ntrap=ntrap))
+    return trap_int(ν, ℱντ(Sν, τ, τs, an=an, Teff=Teff, ν=ν, ntrap=ntrap))
 end
 
 """
@@ -117,10 +117,10 @@ function Hν₀(Sν::Function; τs::Tuple{T,T}=(1e-10, 1000.0),
     @assert !isnan(ntrap)
     @assert μs[1] >= 0.0
     if EB
-        return 0.5 * trap_int_1D(x -> x*IνEB(x, an=an), μs, ntrap=ntrap, logx=logx)
+        return 0.5 * trap_int(x -> x*IνEB(x, an=an), μs, ntrap=ntrap, logx=logx)
     else
         f = x -> x*Iν₀(Sν, x, τs, an=an, Teff=Teff, ν=ν, ntrap=ntrap)
-        return 0.5 * trap_int_1D(f, μs, ntrap=ntrap, logx=logx)
+        return 0.5 * trap_int(f, μs, ntrap=ntrap, logx=logx)
     end
 end
 
