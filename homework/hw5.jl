@@ -10,13 +10,13 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # parameters for flux calc
-ν̃ = range(0.01, 20.0, length=750)
+ν̃ = range(0.01, 20.0, length=1000)
 ν = ν̃2ν.(ν̃.*1e4)
 T = 8700.0
-τs = (1e-5, 100.0)
+τs = (1e-10, 100.0)
 
 # calculate the emergent flux
-F1 = ℱν₀(SνPlanck, τs, Teff=T, ν=ν, ntrap=500)
+F1 = ℱν₀(SνPlanck, τs, Teff=T, ν=ν, ntrap=2500)
 F2 = ℱνEB(SνPlanck, Teff=T, ν=ν)
 
 # plot the emergent flux
@@ -49,23 +49,23 @@ fig.savefig(outdir * "hw5_F_nu_tau_8777.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
 
 # integrate ℱντ over ν
-τ = range(0.01, 10.01, length=11)
+τ = range(0.00001, 10.00001, length=25)
 Fτs = similar(τ)
 for i in eachindex(τ)
     Fτs[i] = ℱτ(SνPlanck, τ[i], τs, Teff=T, ν=ν, ntrap=2500)
 end
 
 # get Stefan Boltzmann
-Fsb = SB.(ν, T)
+Fsb = SB(T)
 
 # now plot it
 fig = plt.figure()
 ax1 = fig.add_subplot(111)
 ax1.plot(τ, Fτs, label="Integration")
-ax1.axhline(y=Fsb, "r:", label="Stefan-Boltzmann")
+ax1.plot(τ, fill(Fsb, (length(τ))), "r:", label="Stefan-Boltzmann")
 ax1.set_xlabel(L"\tau")
 ax1.set_ylabel(L"\mathcal{F}(\tau)\ ({\rm erg/s/cm}^2{\rm /ster})")
-ax1.set_xlim(τ[1], τ[end])
+ax1.set_xlim(-1.0, τ[end]+1.0)
 ax1.legend()
 fig.savefig(outdir*"hw5_F_tau_8777.pdf", bbox_inches="tight")
 plt.clf(); plt.close()

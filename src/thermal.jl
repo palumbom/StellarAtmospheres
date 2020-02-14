@@ -20,7 +20,7 @@ Compute the specific intensity at wavenumber ν̃ of a blackbody with temperatur
 """
 Bν̃(ν̃::t, T::t) where t<:Real = (2.0*h*c^2*ν̃^3) * one(t)/(exp(h*c*ν̃/(kB*T)) - one(t))
 
-SB(ν::t, T::t) where t<:Real = σB * T^4
+SB(T::t) where t<:Real = σB * T^4
 
 
 function Tτ(τ::T; Teff::T=NaN) where T<:Real
