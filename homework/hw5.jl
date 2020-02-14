@@ -10,10 +10,10 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # parameters for flux calc
-ν̃ = range(0.01, 25.0, length=1000)
+ν̃ = range(0.01, 25.0, length=500)
 ν = ν̃2ν.(ν̃.*1e4)
 T = 8700.0
-τs = (1e-10, 100.0)
+τs = (1e-5, 25.0)
 
 # calculate the emergent flux
 F1 = ℱν₀(SνPlanck, τs, Teff=T, ν=ν, ntrap=5000)
@@ -41,8 +41,9 @@ fig = plt.figure()
 ax1 = fig.add_subplot(111)
 for i in eachindex(τ)
     lab = L"\tau=\ " * string(τ[i])
-    ax1.plot(ν̃, ℱντ(SνPlanck, τ[i], τs, Teff=T, ν=ν, ntrap=5000), label=lab)
+    ax1.plot(ν̃, ℱντ(SνPlanck, τ[i], (0.0, Inf), Teff=T, ν=ν, quad=true), c=plt.cm.Dark2(i), label=lab)
 end
+ax1.set_xlim(-0.5,16.0)
 ax1.set_xlabel(L"\tilde{\nu}\ (\mu{\rm m}^{-1})")
 ax1.set_ylabel(L"\mathcal{F}_\nu (\tau)\ ({\rm erg/s/cm}^2{\rm /Hz/ster})")
 ax1.legend(ncol=2)
@@ -50,10 +51,10 @@ fig.savefig(outdir * "hw5_F_nu_tau_8777.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
 
 # integrate ℱντ over ν
-τ = range(0.1, 10.1, length=50)
+τ = range(0.1, 10.0, length=500)
 Fτs = similar(τ)
 for i in eachindex(τ)
-    Fτs[i] = ℱτ(SνPlanck, τ[i], τs, Teff=T, ν=ν, ntrap=5000)
+    Fτs[i] = ℱτ(SνPlanck, τ[i], τs, Teff=T, ν=ν, quad=true)
 end
 
 # get Stefan Boltzmann

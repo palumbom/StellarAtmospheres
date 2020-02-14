@@ -16,7 +16,7 @@ ntrap steps. If err is true, calculate the error via asymptotic estimator
 """
 function trap_int(f::Function, ab::Tuple{T,T}; ntrap::Int=NaN, logx::Bool=false, err::Bool=false) where T<:Real
     @assert ntrap > 1
-    @assert ab[2] > ab[1]
+    # @assert ab[2] > ab[1]
 
     # get x-array
     x = range(ab[1], ab[2], length=ntrap)

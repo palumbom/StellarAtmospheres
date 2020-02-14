@@ -1,3 +1,5 @@
+import QuadGK.quadgk
+
 """
     SνPoly(τ; an=[NaN])
 
@@ -71,20 +73,30 @@ function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN]
 end
 
 
-function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
+function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap=NaN, quad::Bool=false) where T<:Real
     @assert τs[1] <= τ <= τs[2]
-    @assert !isnan(ntrap)
 
-    f1 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x - τ)
-    f2 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, τ - x)
-    ugtν = trap_int(f1, (τ, τs[2]), ntrap=ntrap, logx=false)
-    dgtν = trap_int(f2, (τs[1], τ), ntrap=ntrap, logx=false)
+    f1 = t-> Sν(t, an=an, ν=ν, Teff=Teff) .* expint(2, t - τ)
+    f2 = t-> Sν(t, an=an, ν=ν, Teff=Teff) .* expint(2, τ - t)
+
+    if quad
+        ugtν = quadgk(f1, τ, Inf)[1]
+        dgtν = quadgk(f2, 0.0, τ)[1]
+    else
+        @assert !isnan(ntrap)
+        ugtν = trap_int(f1, (τ, τs[2]), ntrap=ntrap, logx=false)
+        dgtν = trap_int(f2, (τs[1], τ), ntrap=ntrap, logx=false)
+    end
     return (2.0 * π) .* (ugtν .- dgtν)
 end
 
-function ℱτ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
-    @assert !isnan(ntrap)
-    return trap_int(ν, ℱντ(Sν, τ, τs, an=an, Teff=Teff, ν=ν, ntrap=ntrap))
+function ℱτ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap=NaN, quad=false) where T<:Real
+    if quad
+        return trap_int(ν, ℱντ(Sν, τ, τs, an=an, Teff=Teff, ν=ν, quad=quad))
+    else
+        @assert !isnan(ntrap)
+        return trap_int(ν, ℱντ(Sν, τ, τs, an=an, Teff=Teff, ν=ν, ntrap=ntrap))
+    end
 end
 
 """
