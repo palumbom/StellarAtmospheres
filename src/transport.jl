@@ -77,7 +77,7 @@ function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}
 
     f1 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x - τ)
     f2 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, τ - x)
-    ugtν = trap_int(f1, (τ, τs[2]), ntrap=ntrap, logx=true)
+    ugtν = trap_int(f1, (τ, τs[2]), ntrap=ntrap, logx=false)
     dgtν = trap_int(f2, (τs[1], τ), ntrap=ntrap, logx=false)
     return (2.0 * π) .* (ugtν .- dgtν)
 end

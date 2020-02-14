@@ -24,6 +24,6 @@ export Bν, Bλ, Bν̃, λmax, νmax,
        ν2ν̃, SνPoly, SνPlanck,
        Cν, Iν₀, IνEB, ℱν₀,
        ℱντ, ℱτ, ℱνEB, Hν₀,
-       HνEB
+       HνEB, SB
 
 end # module
