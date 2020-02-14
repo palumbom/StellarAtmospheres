@@ -21,11 +21,11 @@ function trap_int_1D(f::Function, ab::Tuple{T,T}; ntrap::Int=NaN, logx::Bool=fal
     @assert ab[2] > ab[1]
 
     # get x-array
+    x = range(ab[1], ab[2], length=ntrap)
     if logx
+        y = x .* f.(x)
         x = range(log(ab[1]), log(ab[2]), length=ntrap)
-        y = exp.(x) .* f.(exp.(x))
     else
-        x = range(ab[1], ab[2], length=ntrap)
         y = f.(x)
     end
 
@@ -46,11 +46,11 @@ function trap_int_2D(f::Function, ab::Tuple{T,T}; ntrap::Int=NaN, logx::Bool=fal
     @assert ab[2] > ab[1]
 
     # get x-array
+    x = range(ab[1], ab[2], length=ntrap)
     if logx
+        y = x .* f.(x)
         x = range(log(ab[1]), log(ab[2]), length=ntrap)
-        y = exp.(x) .* f.(exp.(x))
     else
-        x = range(ab[1], ab[2], length=ntrap)
         y = f.(x)
     end
 

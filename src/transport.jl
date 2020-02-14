@@ -67,18 +67,18 @@ coefficients should be passed as multiple arguments or a splatted array.
 function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
     @assert !isnan(ntrap)
     f1 = x -> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x)
-    return (2.0 * π) .* trap_int_2D(f1, τs, ntrap=ntrap, logx=true)
+    return (2.0 * π) .* trap_int_2D(f1, τs, ntrap=ntrap, logx=false)
 end
 
 
 function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
-    @assert τ[1] <= τ <= τs[2]
+    @assert τs[1] <= τ <= τs[2]
     @assert !isnan(ntrap)
 
-    f1 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, abs(x - τ))
-    f2 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, abs(τ - x))
-    ugtν = trap_int_2D(f1, (τ, τs[2]), ntrap=ntrap, logx=true)
-    dgtν = trap_int_2D(f2, (τs[1], τ), ntrap=ntrap, logx=true)
+    f1 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x - τ)
+    f2 = x-> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, τ - x)
+    ugtν = trap_int_2D(f1, (τ, τs[2]), ntrap=ntrap, logx=false)
+    dgtν = trap_int_2D(f2, (τs[1], τ), ntrap=ntrap, logx=false)
     return (2.0 * π) .* (ugtν .- dgtν)
 end
 
