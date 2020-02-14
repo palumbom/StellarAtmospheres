@@ -1,5 +1,3 @@
-import QuadGK.quadgk
-
 """
     SνPoly(τ; an=[NaN])
 
@@ -42,7 +40,7 @@ end
 Compute the emergent intensity at μ by integration.
 Coefficients should be passed as multiple arguments or a splatted array.
 """
-function Iν₀(Sν::Function, μ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
+function Iν₀(Sν::Function, μ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1) where T<:Real
     @assert !isnan(ntrap)
     f = x -> Cν(Sν, x, an=an, Teff=Teff, ν=ν, μ=μ)
     return trap_int(f, τs, ntrap=ntrap, logx=true)
@@ -66,19 +64,21 @@ source function Sν with coefficients a_n. Use a trapezoidal integrator with
 ntrap trapezoids and logarithmically-spaced gridpoints. Source function
 coefficients should be passed as multiple arguments or a splatted array.
 """
-function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
+function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1) where T<:Real
     @assert !isnan(ntrap)
     f1 = x -> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x)
     return (2.0 * π) .* trap_int(f1, τs, ntrap=ntrap, logx=false)
 end
 
 
-function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap=NaN, quad::Bool=false) where T<:Real
+function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1, quad::Bool=false) where T<:Real
     @assert τs[1] <= τ <= τs[2]
 
+    # phi operator - kinda
     f1 = t-> Sν(t, an=an, ν=ν, Teff=Teff) .* expint(2, t - τ)
     f2 = t-> Sν(t, an=an, ν=ν, Teff=Teff) .* expint(2, τ - t)
 
+    # do the integration
     if quad
         ugtν = quadgk(f1, τ, Inf)[1]
         dgtν = quadgk(f2, 0.0, τ)[1]
@@ -90,7 +90,7 @@ function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}
     return (2.0 * π) .* (ugtν .- dgtν)
 end
 
-function ℱτ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap=NaN, quad=false) where T<:Real
+function ℱτ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1, quad=false) where T<:Real
     if quad
         return trap_int(ν, ℱντ(Sν, τ, τs, an=an, Teff=Teff, ν=ν, quad=quad))
     else
@@ -108,7 +108,7 @@ Use a trapezoidal integrator with ntrap trapezoids and logarithmically-spaced
 gridpoints. Source function coefficients should be passed as multiple
 arguments or a splatted array.
 """
-function Hν₀(Sν::Function, τs::Tuple{T,T}; an::AA{T,1}=[NaN], Teff::T=NaN, ν::AA{T,1}=[NaN], ntrap::Int=NaN) where T<:Real
+function Hν₀(Sν::Function, τs::Tuple{T,T}; an::AA{T,1}=[NaN], Teff::T=NaN, ν::AA{T,1}=[NaN], ntrap::Int=1) where T<:Real
     @assert !isnan(ntrap)
     return ℱν₀(Sν, τs, an=an, ν=ν, Teff=Teff, ntrap=ntrap)/(4.0 * π)
 end
@@ -124,7 +124,7 @@ splatted array.
 """
 function Hν₀(Sν::Function; τs::Tuple{T,T}=(1e-10, 1000.0),
              μs::Tuple{T,T}=(1e-10, 1.0), Teff::T=NaN,
-             an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=NaN,
+             an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1,
              EB::Bool=true, logx::Bool=true) where T<:Real
     @assert !isnan(ntrap)
     @assert μs[1] >= 0.0

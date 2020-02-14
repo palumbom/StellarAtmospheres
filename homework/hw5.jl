@@ -35,6 +35,23 @@ ax2.set_ylabel(L"{\rm Residual}\ \mathcal{F}_\nu (0)")
 fig.savefig(outdir * "hw5_F_nu_0_8777.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
 
+# second derivative of Sν
+τ = range(0.0, 2.0, length=51)
+d2 = similar(ν)
+for i in eachindex(ν)
+    f = t -> SνPlanck(t, Teff=T, ν=[ν[i]])[1]
+    d2[i] = deriv2(f, τ)[26]
+end
+
+# plot the second derivative
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
+ax1.plot(ν̃, d2, "k-")
+ax1.set_xlabel(L"\tilde{\nu}\ (\mu{\rm m}^{-1})")
+ax1.set_ylabel(L"\frac{d^2S_\nu(\tau)}{d\tau^2}|_{\tau = 1}\ ({\rm erg/s/cm}^2{\rm /Hz/ster})")
+fig.savefig(outdir * "hw5_dSdT.pdf")
+plt.clf(); plt.close()
+
 # calculate & plot flux at values of τ
 τ = [0.1, 1.0, 2.0, 5.0, 10.0, 20.0]
 fig = plt.figure()

@@ -14,6 +14,7 @@ include("constants.jl")
 include("utils.jl")
 include("expint.jl")
 include("integrate.jl")
+include("differentiate.jl")
 include("axis_strings.jl")
 include("thermal.jl")
 include("transport.jl")
@@ -24,6 +25,6 @@ export Bν, Bλ, Bν̃, λmax, νmax,
        ν2ν̃, SνPoly, SνPlanck,
        Cν, Iν₀, IνEB, ℱν₀,
        ℱντ, ℱτ, ℱνEB, Hν₀,
-       HνEB, SB
+       HνEB, SB, deriv, deriv2
 
 end # module
