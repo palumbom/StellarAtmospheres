@@ -36,7 +36,7 @@ fig.savefig(outdir * "hw5_F_nu_0_8777.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
 
 # calculate & plot flux at values of τ
-τ = [0.1, 1.0, 2.0, 5.0, 10.0]
+τ = [0.1, 1.0, 2.0, 5.0, 10.0, 20.0]
 fig = plt.figure()
 ax1 = fig.add_subplot(111)
 for i in eachindex(τ)
@@ -51,7 +51,7 @@ fig.savefig(outdir * "hw5_F_nu_tau_8777.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
 
 # integrate ℱντ over ν
-τ = range(0.1, 10.0, length=500)
+τ = range(0.1, 10.0, length=300)
 Fτs = similar(τ)
 for i in eachindex(τ)
     Fτs[i] = ℱτ(SνPlanck, τ[i], τs, Teff=T, ν=ν, quad=true)
