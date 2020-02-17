@@ -1,5 +1,5 @@
 """
-    SνPoly(τ; an=[NaN])
+    SνPoly(τ; an=[NaN], kwargs...)
 
 Compute the source function at τ as a polynomial expansion with
 coefficients a_n.
@@ -10,35 +10,37 @@ function SνPoly(τ::T; an::AA{T,1}=[NaN], kwargs...) where T<:Real
 end
 
 """
-    SνPlanck(τ, ν, Teff=NaN)
+    SνPlanck(τ, ν, Teff=NaN, kwargs...)
 
-Compute the source function at τ and ν as the Planck Function with Teff.
+Compute the source function at τ and frequency ν as the Planck Function with Teff.
 """
 
 function SνPlanck(τ::T; Teff::T=NaN, ν::AA{T,1}=[NaN], kwargs...) where T<:Real
     @assert !isnan(Teff)
     @assert sum(isnan.(ν)) == 0
+    @assert all(ν .>= 0.0)
     Ts = Tτ(τ, Teff=Teff)
     return Bν.(ν, Ts)
 end
 
 """
-    Cν(τ, an...; μ=1.0, Teff, ν)
+    Cν(Sν, τ; μ=1.0, Teff=NaN, ν=[NaN], an=[NaN])
 
 Compute the contribution function at optical depth τ and and disk position
-μ with the specified source function. For a polynomial Sν, coefficients
-an... must be passed. For Planck Function, an effective temperature and an
-array of frequencies must be passed.
+μ with the specified source function Sν. For a polynomial Sν, coefficients
+[an] must be passed as an array. For Planck Function, an effective
+temperature and an array of frequencies must be passed.
 """
 function Cν(Sν::Function, τ::T; μ::T=1.0, Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN]) where T<:Real
     return Sν(τ, an=an, ν=ν, Teff=Teff) * exp(-τ/μ)/μ
 end
 
 """
-    Iν₀(μ, τs, an...)
+    Iν₀(Sν, μ, τs; Teff=NaN, ν=[NaN], an=[NaN], ntrap=1)
 
-Compute the emergent intensity at μ by integration.
-Coefficients should be passed as multiple arguments or a splatted array.
+Compute the emergent intensity at μ by integration over limits τs[1] to τs[2].
+For a polynomial Sν, coefficients [an] must be passed; for Planck, an
+effective temperature and an array of frequencies must be passed.
 """
 function Iν₀(Sν::Function, μ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1) where T<:Real
     @assert !isnan(ntrap)
