@@ -64,10 +64,10 @@ source function Sν with coefficients a_n. Use a trapezoidal integrator with
 ntrap trapezoids and logarithmically-spaced gridpoints. Source function
 coefficients should be passed as multiple arguments or a splatted array.
 """
-function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1) where T<:Real
+function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], err::Bool=false, ntrap::Int=1) where T<:Real
     @assert !isnan(ntrap)
     f1 = x -> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x)
-    return (2.0 * π) .* trap_int(f1, τs, ntrap=ntrap, logx=false)
+    return (2.0 * π) .* trap_int(f1, τs, ntrap=ntrap, logx=false, err=err)
 end
 
 

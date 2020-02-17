@@ -36,7 +36,7 @@ function trap_int(f::Function, ab::Tuple{T,T}; ntrap::Int=1, logx::Bool=false, e
         db = (y[end] - y[end-1])/(x[end] - x[end-1])
         da = (y[2] - y[1])/(x[2] - x[1])
         err = -((ab[2] - ab[1])^3 / (12*ntrap^2)) * (db - da)
-        return sum(replace!(x -> !isnan(x), diff(x).*asum(y)))/2.0, err
+        return sum(diff(x).*asum(y))/2.0, err
 
     end
 end

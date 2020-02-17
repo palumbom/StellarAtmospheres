@@ -16,7 +16,7 @@ T = 8700.0
 τs = (1e-5, 25.0)
 
 # calculate the emergent flux
-F1 = ℱν₀(SνPlanck, τs, Teff=T, ν=ν, ntrap=5000)
+F1, err = ℱν₀(SνPlanck, τs, Teff=T, ν=ν, ntrap=5000, err=true)
 F2 = ℱνEB(SνPlanck, Teff=T, ν=ν)
 
 # plot the emergent flux
@@ -28,11 +28,24 @@ ax1.set_xlim(-0.5, 12.5)
 ax1.set_ylim(1e-7, 1e-3)
 ax1.set_yscale("log")
 ax1.legend()
-ax1.annotate(L"T_{\rm eff} = 8777\ {\rm K}", (0.1, 5e-4), xycoords="data")
+ax1.annotate(L"T_{\rm eff} = 8700\ {\rm K}", (0.1, 5e-4), xycoords="data")
 ax2.plot(ν̃, F1 - F2, "k-")
+ax2.set_xlim(-0.5, 12.5)
 ax2.set_xlabel(L"\tilde{\nu}\ (\mu{\rm m}^{-1})")
-ax2.set_ylabel(L"{\rm Residual}\ \mathcal{F}_\nu (0)")
-fig.savefig(outdir * "hw5_F_nu_0_8777.pdf", bbox_inches="tight")
+ax2.set_ylabel(L"\mathcal{F}_\nu^{\rm Int.}(0) - \mathcal{F}_\nu^{\rm EB}(0)")
+fig.savefig(outdir * "hw5_F_nu_0_8700.pdf", bbox_inches="tight")
+plt.clf(); plt.close()
+
+# plot the error
+fig = plt.figure(figsize=(8,7))
+ax1 = fig.add_subplot()
+ax1.plot(ν̃, abs.(err), "k-")
+ax1.set_xlim(-0.5, 12.5)
+ax1.set_xlabel(L"\tilde{\nu}\ (\mu{\rm m}^{-1})")
+ax1.set_ylabel(L"{\rm Approximate\ Int.\ Error}  \ ({\rm erg/s/cm}^2{\rm /Hz/ster})")
+ax1.set_yscale("log")
+ax1.set_ylim(1e-16, 1e-6)
+fig.savefig(outdir * "hw5_int_error.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
 
 # second derivative of Sν
@@ -49,6 +62,7 @@ ax1 = fig.add_subplot(111)
 ax1.plot(ν̃, d2, "k-")
 ax1.set_xlabel(L"\tilde{\nu}\ (\mu{\rm m}^{-1})")
 ax1.set_ylabel(L"\frac{d^2S_\nu(\tau)}{d\tau^2}|_{\tau = 1}\ ({\rm erg/s/cm}^2{\rm /Hz/ster})")
+ax1.set_xlim(-0.5, 12.5)
 fig.savefig(outdir * "hw5_dSdT.pdf")
 plt.clf(); plt.close()
 
@@ -64,7 +78,7 @@ ax1.set_xlim(-0.5,16.0)
 ax1.set_xlabel(L"\tilde{\nu}\ (\mu{\rm m}^{-1})")
 ax1.set_ylabel(L"\mathcal{F}_\nu (\tau)\ ({\rm erg/s/cm}^2{\rm /Hz/ster})")
 ax1.legend(ncol=2)
-fig.savefig(outdir * "hw5_F_nu_tau_8777.pdf", bbox_inches="tight")
+fig.savefig(outdir * "hw5_F_nu_tau_8700.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
 
 # integrate ℱντ over ν
@@ -86,5 +100,5 @@ ax1.set_xlabel(L"\tau")
 ax1.set_ylabel(L"\mathcal{F}(\tau)\ ({\rm erg/s/cm}^2{\rm /ster})")
 ax1.set_xlim(-1.0, τ[end]+1.0)
 ax1.legend()
-fig.savefig(outdir*"hw5_F_tau_8777.pdf", bbox_inches="tight")
+fig.savefig(outdir*"hw5_F_tau_8700.pdf", bbox_inches="tight")
 plt.clf(); plt.close()
