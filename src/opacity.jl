@@ -2,6 +2,7 @@
 using CSV
 using DataFrames
 
+# directory path for the data
 datdir = (@__DIR__) * "/../data/"
 
 # extend tryparse function
