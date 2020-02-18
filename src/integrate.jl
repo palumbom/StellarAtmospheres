@@ -10,10 +10,11 @@ function trap_int(x::AA{T,1}, y::AA{T,1}) where T<:Real
 end
 
 """
-    trap_int(f, ab; ntrap=NaN, err=false)
+    trap_int(f, ab; ntrap=NaN, logx=false, err=false)
 
 Compute the trapezoidal integral for function f(x) on the range (a,b) using
-ntrap steps. If err is true, calculate the error via asymptotic estimator
+ntrap steps. If logx is true, integrate on logarithmically-spaced points as
+int f(x)xd(lnx). If err is true, calculate the error via asymptotic estimator
 (see wikipedia for summary).
 """
 function trap_int(f::Function, ab::Tuple{T,T}; ntrap::Int=1, logx::Bool=false, err::Bool=false) where T<:Real

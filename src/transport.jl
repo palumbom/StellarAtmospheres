@@ -49,10 +49,10 @@ function Iν₀(Sν::Function, μ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=
 end
 
 """
-    IνEB(μ, an...)
+    IνEB(Sν, μ; Teff=NaN, ν=[NaN], an=[NaN])
 
-Compute the emergent intensity at μ using the Eddington-Barbier approximation.
-Coefficients should be passed as multiple arguments or a splatted array.
+Compute the emergent intensity at μ using the Eddington-Barbier approximation
+given the specified source function Sν and its parameters.
 """
 function IνEB(Sν::Function, μ::T; Teff::T=NaN, ν::AA{T,1}=[NaN], an::AA{T,1}=[NaN]) where T<:Real
     return Sν(μ, an=an, ν=ν, Teff=Teff)
@@ -62,9 +62,8 @@ end
     ℱν₀(τs::Tuple, an...; ntrap=NaN)
 
 Compute the surface flux (as defined in Rutten) by integrating over τs given
-source function Sν with coefficients a_n. Use a trapezoidal integrator with
-ntrap trapezoids and logarithmically-spaced gridpoints. Source function
-coefficients should be passed as multiple arguments or a splatted array.
+source function Sν with polynomial coefficients an or Teff and ν for Planck
+function. Use a trapezoidal integrator with ntrap trapezoids.
 """
 function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], err::Bool=false, ntrap::Int=1) where T<:Real
     @assert !isnan(ntrap)
