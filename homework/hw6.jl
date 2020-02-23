@@ -13,10 +13,8 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 df = SA.tabulate_partition()
 
 # get species
-s = "Si"
 θ = range(0.2, 2.0, step=0.2)
 T = SA.theta_to_temp.(θ)
-P = SA.row_for_species(df, s)
 
 # interpolation grid
 Ts = range(2520.0, 25200.0, length=100)
@@ -24,9 +22,15 @@ Ts = range(2520.0, 25200.0, length=100)
 # plot it
 fig = plt.figure()
 ax1 = fig.add_subplot(111)
-ax1.scatter(T, P, c="k", label="Data")
-ax1.plot(Ts, SA.calc_partition(Ts, df, s), "k--", label="Interpolation")
+ax1.scatter(T, SA.row_for_species(df, "Si"), c="k", label="Silicon")
+ax1.scatter(T, SA.row_for_species(df, "Fe"), c="b", label="Iron")
+ax1.scatter(T, SA.row_for_species(df, "Mg"), c="r", label="Magnesium")
+ax1.plot(Ts, SA.calc_partition.(Ts, "Si"), "k--")
+ax1.plot(Ts, SA.calc_partition.(Ts, "Fe"), "b--")
+ax1.plot(Ts, SA.calc_partition.(Ts, "Mg"), "r--")
 ax1.set_xlabel(L"{\rm Temperature\ (K)}")
 ax1.set_ylabel(L"{\rm Partition\ Function}")
+ax1.set_xlim(1500, 26500)
 ax1.legend()
 fig.savefig(outdir*"hw6_partit.pdf")
+plt.clf(); plt.close()

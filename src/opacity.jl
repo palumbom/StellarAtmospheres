@@ -35,6 +35,9 @@ function col_to_float!(df::DataFrame, colnames::T...) where T<:Symbol
     return df
 end
 
+"""
+
+"""
 function tabulate_partition(dir::String=datdir)
     @assert isdir(dir)
 
@@ -46,6 +49,9 @@ function tabulate_partition(dir::String=datdir)
     return df
 end
 
+"""
+
+"""
 function tabulate_ionization(dir::String=datdir)
     @assert isdir(dir)
 
@@ -68,13 +74,21 @@ function theta_to_temp(θ::T) where T<:Real
     return 5040.0/θ
 end
 
+"""
+
+"""
 function row_for_species(df::DataFrame, species::String)
     # find the appropriate row
     ind = findfirst(df.Species .== species)
     return convert(Array, df[ind, :][2:end-1])
 end
 
-function calc_partition(temp::T, df::DataFrame, species::String) where T<:Real
+"""
+
+"""
+function calc_partition(temp::T, species::String) where T<:Real
+    df = tabulate_partition()
+
     @assert species in df.Species
     @assert temp >= 0
 
@@ -92,16 +106,4 @@ function calc_partition(temp::T, df::DataFrame, species::String) where T<:Real
     # now do the interpolation
     spl = Spline1D(θ, P)
     return spl(temp_to_theta(temp))
-end
-
-function calc_partition(temp::AA{T,1}, df::DataFrame, species::String) where T<:Real
-    @assert species in df.Species
-    @assert all(temp .>= 0)
-
-    # loop over temps
-    out = similar(temp)
-    for i in eachindex(temp)
-        out[i] = calc_partition(temp[i], df, species)
-    end
-    return out
 end
