@@ -64,18 +64,44 @@ function temp_to_theta(temp::T) where T<:Real
     return 5040.0/(temp)
 end
 
-function calc_partitition(df::DataFrame, temp::T, species::String) where T<:Real
+function theta_to_temp(θ::T) where T<:Real
+    return 5040.0/θ
+end
+
+function row_for_species(df::DataFrame, species::String)
+    # find the appropriate row
+    ind = findfirst(df.Species .== species)
+    return convert(Array, df[ind, :][2:end-1])
+end
+
+function calc_partition(temp::T, df::DataFrame, species::String) where T<:Real
     @assert species in df.Species
     @assert temp >= 0
 
+    # check for simple species
+    if species == "H-"
+        return 1.0
+    elseif species == "HII"
+        return 1.0
+    end
+
     # theta data
     θ = range(0.2, 2.0, step=0.2)
-
-    # find the appropriate row
-    ind = findfirst(df.Species .== species)
-    row = convert(Array, df[ind, :][2:end-1])
+    P = row_for_species(df, species)
 
     # now do the interpolation
-    spl = Spline1D(θ, row)
+    spl = Spline1D(θ, P)
     return spl(temp_to_theta(temp))
+end
+
+function calc_partition(temp::AA{T,1}, df::DataFrame, species::String) where T<:Real
+    @assert species in df.Species
+    @assert all(temp .>= 0)
+
+    # loop over temps
+    out = similar(temp)
+    for i in eachindex(temp)
+        out[i] = calc_partition(temp[i], df, species)
+    end
+    return out
 end
