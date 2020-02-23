@@ -1,5 +1,6 @@
 # modules for reading/writing table data
 using CSV
+using Dierckx
 using DataFrames
 
 # directory path for the data
@@ -54,4 +55,27 @@ function tabulate_ionization(dir::String=datdir)
                   ignorerepeated=true, silencewarnings=true)
     col_to_float!(df, names(df)[3:end]...)
     return df
+end
+
+"""
+
+"""
+function temp_to_theta(temp::T) where T<:Real
+    return 5040.0/(temp)
+end
+
+function calc_partitition(df::DataFrame, temp::T, species::String) where T<:Real
+    @assert species in df.Species
+    @assert temp >= 0
+
+    # theta data
+    θ = range(0.2, 2.0, step=0.2)
+
+    # find the appropriate row
+    ind = findfirst(df.Species .== species)
+    row = convert(Array, df[ind, :][2:end-1])
+
+    # now do the interpolation
+    spl = Spline1D(θ, row)
+    return spl(temp_to_theta(temp))
 end
