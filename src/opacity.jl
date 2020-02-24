@@ -31,6 +31,7 @@ function col_to_float!(df::DataFrame, colnames::T...) where T<:Symbol
         df[isnothing.(df[!, col]), col] .= NaN
         df[ismissing.(df[!, col]), col] .= NaN
         df[!, col] = convert.(Float64, df[!,col])
+        df[!, col] = replace(df[!,col], -0.0=>NaN)
     end
     return df
 end
@@ -49,6 +50,8 @@ function tabulate_partition(dir::String=datdir)
     return df
 end
 
+dfp = tabulate_partition()
+
 """
 
 """
@@ -62,6 +65,8 @@ function tabulate_ionization(dir::String=datdir)
     col_to_float!(df, names(df)[3:end]...)
     return df
 end
+
+dfi = tabulate_ionization()
 
 """
 
@@ -87,9 +92,7 @@ end
 
 """
 function calc_partition(temp::T, species::String) where T<:Real
-    df = tabulate_partition()
-
-    @assert species in df.Species
+    @assert species in dfp.Species
     @assert temp >= 0
 
     # check for simple species
@@ -101,9 +104,14 @@ function calc_partition(temp::T, species::String) where T<:Real
 
     # theta data
     θ = range(0.2, 2.0, step=0.2)
-    P = row_for_species(df, species)
+    P = row_for_species(dfp, species)
 
     # now do the interpolation
     spl = Spline1D(θ, P)
     return spl(temp_to_theta(temp))
+end
+
+function ΦT(temp::T, Pe::T, species::String) where T<:Real
+    θ = calc_partition(temp, species)
+    χ = "derp"
 end
