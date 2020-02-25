@@ -7,7 +7,7 @@ Contact: mlp95@psu.edu
 module StellarAtmospheres
 
 # abbreviate AbstractArray
-AA = AbstractArray
+const AA = AbstractArray
 
 # bring in constants and thermal stuff
 include("constants.jl")

@@ -50,7 +50,7 @@ function tabulate_partition(dir::String=datdir)
     return df
 end
 
-dfp = tabulate_partition()
+const dfp = tabulate_partition()
 
 """
 
@@ -66,7 +66,7 @@ function tabulate_ionization(dir::String=datdir)
     return df
 end
 
-dfi = tabulate_ionization()
+const dfi = tabulate_ionization()
 
 """
 
@@ -113,5 +113,5 @@ end
 
 function ΦT(temp::T, Pe::T, species::String) where T<:Real
     θ = calc_partition(temp, species)
-    χ = "derp"
+    χ = dfi
 end
