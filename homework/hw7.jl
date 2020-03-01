@@ -9,5 +9,6 @@ import PyPlot; plt = PyPlot; mpl = plt.matplotlib;
 outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
-# do stuff
-SA.ΦT(temp=8000.0, species="H")
+# calculate opacities
+λs = range(1000.0, 20000.0, length=1000)
+bfHydro = SA.κ_H_bf.(λs, 5143.0, 0.0)

@@ -19,6 +19,7 @@ include("integrate.jl")
 include("differentiate.jl")
 include("axis_strings.jl")
 include("thermal.jl")
+include("spec_tables.jl")
 include("opacity.jl")
 include("transport.jl")
 
