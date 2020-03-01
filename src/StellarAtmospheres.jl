@@ -8,6 +8,7 @@ module StellarAtmospheres
 
 # abbreviate AbstractArray
 const AA = AbstractArray
+const AF = AbstractFloat
 
 # bring in constants and thermal stuff
 include("constants.jl")

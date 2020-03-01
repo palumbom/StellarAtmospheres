@@ -10,3 +10,4 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # do stuff
+SA.ΦT(temp=8000.0, species="H")
