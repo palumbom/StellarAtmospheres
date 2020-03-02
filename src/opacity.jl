@@ -83,8 +83,8 @@ end
 
 Gray Eq. 8.3
 """
-function χ(n::Int, species::String; ion::Symbol=:First)
-    return χ(species, ion) - ((h*R*c)/n^2) * eV
+function χ(n::Int, species::String)
+    return χ(species, :First) - ((h*R*c)/n^2) * eV
 end
 
 """
@@ -111,7 +111,7 @@ Gray Eq. 8.6. Return value is dimensionless.
 function g_ff(λ::T, temp::T, Pe::T) where T<:AF
     θ = temp_to_theta(temp)
     λR = λ * R * 1e-8 # convert Å to cm
-    return one(T) + (0.3456/λR^(1.0/3.0)) * (loge/(θ * 1.2398e4/λ) + 0.5)
+    return one(T) + ((0.3456/λR^(1.0/3.0)) * (loge/(θ * 1.2398e4/λ) + 0.5))
 end
 
 """
@@ -132,7 +132,7 @@ function κ_H_bf(λ::T, temp::T, Pe::T) where T<:AF
     sm = 0.0
 
     while nn <= nf
-        sm += g_bf(λ, nn) * exp10(-θ * χ1) / nn^3
+        sm += g_bf(λ, nn) * exp10(-θ * χ(nn, "H")) / nn^3
         nn += 1
     end
 
