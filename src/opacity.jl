@@ -109,8 +109,8 @@ end
 Gray Eq. 8.6. Return value is dimensionless.
 """
 function g_ff(λ::T, temp::T, Pe::T) where T<:AF
-    ϴ = temp_to_theta(temp)
-    λR = λc* R * 1e-8 # convert Å to cm
+    θ = temp_to_theta(temp)
+    λR = λ * R * 1e-8 # convert Å to cm
     return one(T) + (0.3456/λR^(1.0/3.0)) * (loge/(θ * 1.2398e4/λ) + 0.5)
 end
 
@@ -166,5 +166,56 @@ end
 
 """
 
-Gray Eq. 8.11.
+Gray Eq. 8.11. Units of 1e-18 cm^2/H- ion
 """
+function α_bf_minus(λ::T) where T<:AF
+    # short circuit return if long λ
+    if λ > 16270.0
+        return zero(T)
+    end
+    as = [1.99654, -1.18267e-5, 2.64243e-6, -4.40524e-10,
+          3.23992e-14, -1.39568e-18, 2.78701e-23]
+    return 1e-18 * sum([as[n] * λ^(n-1) for n in 1:length(as)])
+end
+
+"""
+
+Gray Eq. 8.12.
+"""
+function κ_H_minus_bf(λ::T, temp::T, Pe::T) where T<:AF
+    θ = temp_to_theta(temp)
+    return 4.158e-10 * α_bf_minus(λ) * Pe * θ^(5.0/2.0) * exp10(0.754 * θ)
+end
+
+"""
+
+Gray Eq. 8.13.
+"""
+function κ_H_minus_ff(λ::T, temp::T, Pe::T) where T<:AF
+    θ = temp_to_theta(temp)
+    logλ = log10(λ)
+
+    # polynomial fit from Bell and Berrington
+    f0 = -2.2763 - 1.6850*logλ + 0.76661*logλ^2.0 - 0.053346*logλ^3.0
+    f1 = 15.2827 - 9.2846*logλ + 1.99381*logλ^2.0 - 0.142631*logλ^3.0
+    f2 = -197.789 + 190.266*logλ - 67.9775*logλ^2.0 + 10.6913*logλ^3.0 - 0.625151*logλ^4.0
+    return 1e-26 * Pe * exp10(f0 + f1*log10(θ) + f2*log10(θ)^2.0)
+end
+
+"""
+
+Gray Eq. 8.18 abridged
+"""
+function κ_tot(λ::T, temp::T, Pe::T) where T<:AF
+    # calculate each opacity
+    κHbf = κ_H_bf(λ, temp, Pe)
+    κHff = κ_H_ff(λ, temp, Pe)
+    κHmbf = κ_H_minus_bf(λ, temp, Pe)
+    κHmff = κ_H_minus_ff(λ, temp, Pe)
+
+    # other quantities
+    θ = temp_to_theta(temp)
+    Φs = ΦT(temp, "H", ion=:First)
+    χλ = 1.2398e4/λ
+    return ((κHbf + κHff + κHmbf)*(one(T) - exp10(-χλ*θ)) + κHmff)/(one(T) + Φs/Pe)
+end
