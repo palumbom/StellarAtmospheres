@@ -15,11 +15,11 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 # do Gray Fig. 8.5b first
 T = 5143.0
 Pe = exp10(1.08)
-κHbf = SA.κ_H_bf.(λs, T, Pe)./Pe
-κHff = SA.κ_H_ff.(λs, T, Pe)./Pe
-κHmbf = SA.κ_H_minus_bf.(λs, T, Pe)./Pe
-κHmff = SA.κ_H_minus_ff.(λs, T, Pe)./Pe
-κT = SA.κ_tot.(λs, T, Pe)./Pe
+κHbf = SA.κ_H_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHff = SA.κ_H_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κHmbf = SA.κ_H_minus_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHmff = SA.κ_H_minus_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κT = SA.κ_tot.(λs, T, Pe) .* 1e26 ./ Pe
 
 # plot it
 fig = plt.figure()
@@ -42,11 +42,11 @@ plt.clf(); plt.close()
 # do Gray Fig. 8.5b first
 T = 6429.0
 Pe = exp10(1.77)
-κHbf = SA.κ_H_bf.(λs, T, Pe)./Pe
-κHff = SA.κ_H_ff.(λs, T, Pe)./Pe
-κHmbf = SA.κ_H_minus_bf.(λs, T, Pe)./Pe
-κHmff = SA.κ_H_minus_ff.(λs, T, Pe)./Pe
-κT = SA.κ_tot.(λs, T, Pe)./Pe
+κHbf = SA.κ_H_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHff = SA.κ_H_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κHmbf = SA.κ_H_minus_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHmff = SA.κ_H_minus_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κT = SA.κ_tot.(λs, T, Pe) .* 1e26 ./ Pe
 
 # plot it
 fig = plt.figure()
@@ -69,11 +69,11 @@ plt.clf(); plt.close()
 # do Gray Fig. 8.5c now
 T = 7715.0
 Pe = exp10(2.50)
-κHbf = SA.κ_H_bf.(λs, T, Pe)./Pe
-κHff = SA.κ_H_ff.(λs, T, Pe)./Pe
-κHmbf = SA.κ_H_minus_bf.(λs, T, Pe)./Pe
-κHmff = SA.κ_H_minus_ff.(λs, T, Pe)./Pe
-κT = SA.κ_tot.(λs, T, Pe)./Pe
+κHbf = SA.κ_H_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHff = SA.κ_H_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κHmbf = SA.κ_H_minus_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHmff = SA.κ_H_minus_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κT = SA.κ_tot.(λs, T, Pe) .* 1e26 ./ Pe
 
 # plot it
 fig = plt.figure()
@@ -96,11 +96,11 @@ plt.clf(); plt.close()
 # do Gray Fig. 8.5d now
 T = 11572.0
 Pe = exp10(2.76)
-κHbf = SA.κ_H_bf.(λs, T, Pe)./Pe
-κHff = SA.κ_H_ff.(λs, T, Pe)./Pe
-κHmbf = SA.κ_H_minus_bf.(λs, T, Pe)./Pe
-κHmff = SA.κ_H_minus_ff.(λs, T, Pe)./Pe
-κT = SA.κ_tot.(λs, T, Pe)./Pe
+κHbf = SA.κ_H_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHff = SA.κ_H_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κHmbf = SA.κ_H_minus_bf.(λs, T, Pe) .* 1e26 ./ Pe
+κHmff = SA.κ_H_minus_ff.(λs, T, Pe) .* 1e26 ./ Pe
+κT = SA.κ_tot.(λs, T, Pe) .* 1e26 ./ Pe
 
 # plot it
 fig = plt.figure()
