@@ -7,3 +7,5 @@ function tabulate_abundances(dir::String=datdir)
     col_to_float!(df, names(df)[4:end]...)
     return df
 end
+
+const dfa = tabulate_abundances()

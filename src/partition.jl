@@ -23,13 +23,16 @@ function calc_partition(temp::T, species::String) where T<:AF
     end
 
     # now check for species in table
-    @assert species in dfp.Species
+    if !(species in dfp.Species)
+        return 1.0
+    end
 
     # theta data
     θs = range(0.2, 2.0, step=0.2)
     Ps = row_for_species(dfp, species)
 
     # now do the interpolation
-    spl = Spline1D(θs, Ps)
+    ninds = .!isnan.(Ps)
+    spl = Spline1D(θs[ninds], Ps[ninds])
     return spl(temp_to_theta(temp))
 end

@@ -24,7 +24,9 @@ function ΦT(;temp::T=NaN, species::String="", ion::Symbol=:First) where T<:AF
 end
 
 function ΦT(temp::T, species::String; ion::Symbol=:First) where T<:AF
-    @assert species in dfi.Species
+    if !(species in dfi.Species)
+        println(species)
+    end
     @assert species in dfp.Species
 
     # figure out what the next ionization is
@@ -86,7 +88,7 @@ function κ_H_bf(λ::T, temp::T, Pe::T) where T<:AF
     # tabulate some needed numbers
     λcm = λ * 1e-8
     θ = temp_to_theta(temp)
-    n0 = floor(Int, sqrt(13.6/(eV*h*c/(λcm))) + one(T))  # dimensionless
+    n0 = floor(Int, sqrt(R*λcm) + one(T))  # dimensionless
     χ1 = χ("H", :First)
     χ3 = χ1 * (one(T) - (one(T)/(n0 + 3)^2))
 

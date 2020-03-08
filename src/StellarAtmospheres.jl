@@ -20,9 +20,9 @@ include("differentiate.jl")
 include("axis_strings.jl")
 include("thermal.jl")
 include("spec_tables.jl")
-include("abundances.jl")
 include("partition.jl")
 include("opacity.jl")
+include("pressure.jl")
 include("transport.jl")
 
 # export things

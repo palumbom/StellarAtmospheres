@@ -73,7 +73,7 @@ function tabulate_ionization(dir::String=datdir; nist::Bool=true)
         df = CSV.read(dir * "nist_ioniz.txt", header=header, delim="\t",
                       ignorerepeated=true, silencewarnings=true)
         col_to_float!(df, names(df)[3:end]...)
-        df.Species = strip.(df.Species)
+        df.Species = string.(strip.(df.Species))
     else
         header = ["Z", "Species", "Weight", "First", "Second", "Third"]
         df = CSV.read(dir * "nist_ioniz.txt", header=header, delim=" ",
@@ -84,3 +84,18 @@ function tabulate_ionization(dir::String=datdir; nist::Bool=true)
 end
 
 const dfi = tabulate_ionization(nist=true)
+
+"""
+
+"""
+function tabulate_abundances(dir::String=datdir)
+    @assert isdir(dir)
+
+    # read it in
+    header = ["Z", "Element", "Weight", "A", "logA", "logA12"]
+    df = CSV.read(dir*"SolarAbundance.txt", header=header, skipto=2)
+    col_to_float!(df, names(df)[4:end]...)
+    return df
+end
+
+const dfa = tabulate_abundances()
