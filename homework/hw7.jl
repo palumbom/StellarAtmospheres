@@ -9,7 +9,6 @@ import PyPlot; plt = PyPlot; mpl = plt.matplotlib;
 outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
-
 # Phi as function of T
 Ts = range(1000.0, 12000.0, length=1000)
 Φ1 = SA.ΦT.(Ts, "Fe", ion=:First)

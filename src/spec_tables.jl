@@ -69,13 +69,13 @@ function tabulate_ionization(dir::String=datdir; nist::Bool=true)
 
     # read in the files & # make sure numbers are floats
     if nist
-        header = ["A", "Species", "Weight", "First"]
+        header = ["Z", "Species", "Weight", "First"]
         df = CSV.read(dir * "nist_ioniz.txt", header=header, delim="\t",
                       ignorerepeated=true, silencewarnings=true)
         col_to_float!(df, names(df)[3:end]...)
         df.Species = strip.(df.Species)
     else
-        header = ["A", "Species", "Weight", "First", "Second", "Third"]
+        header = ["Z", "Species", "Weight", "First", "Second", "Third"]
         df = CSV.read(dir * "nist_ioniz.txt", header=header, delim=" ",
                       ignorerepeated=true, silencewarnings=true)
         col_to_float!(df, names(df)[3:end]...)
