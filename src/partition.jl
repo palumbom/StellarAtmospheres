@@ -17,14 +17,14 @@ function calc_partition(temp::T, species::String) where T<:AF
 
     # check for simple species
     if species == "H-"
-        return one(T)
+        return zero(T)
     elseif species == "HII"
-        return one(T)
+        return zero(T)
     end
 
     # now check for species in table
     if !(species in dfp.Species)
-        return 1.0
+        return zero(T)
     end
 
     # theta data
