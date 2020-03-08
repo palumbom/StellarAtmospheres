@@ -36,3 +36,11 @@ ax1.set_xlabel(L"T\ {\rm (K)}")
 ax1.set_ylabel(L"\log P_{\rm e}\ ({\rm dyne\ cm}^{-2})")
 fig.savefig(outdir*"hw8_Pe.pdf")
 plt.clf(); plt.close()
+
+# calculate sum of abundances for 1-30
+sum_Aj1 = sum(filter(!isnan, SA.dfa.A[1:30])); @show sum_Aj1
+sum_Ajμj1 = sum(filter(!isnan, SA.dfa.A[1:30] .* SA.dfa.Weight[1:30])); @show sum_Ajμj1
+
+# calculate sum of abundances for > 2
+sum_Aj2 = sum(filter(!isnan, SA.dfa.A[3:end])); @show sum_Aj2
+sum_Ajμj2 = sum(filter(!isnan, SA.dfa.A[3:end] .* SA.dfa.Weight[3:end])); @show sum_Ajμj2
