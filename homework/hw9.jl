@@ -121,5 +121,6 @@ fig.savefig(outdir*"hw9_kappa.pdf")
 plt.clf(); plt.close()
 
 # verify opacity
+g = exp10(4.4377)
 dτ = diff(dfv.τ_500)
 dP = diff(dfv.Ptot)
