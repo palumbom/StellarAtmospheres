@@ -107,6 +107,15 @@ const dfa = tabulate_abundances()
 """
 
 """
+function abundance_for_element(element::String)
+    # find the appropriate row
+    ind = findfirst(dfa.Element .== element)
+    return dfa[ind, :A]
+end
+
+"""
+
+"""
 function tabulate_VALIIIc(dir::String=datdir)
     @assert isdir(dir)
 

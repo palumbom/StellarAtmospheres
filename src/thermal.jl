@@ -37,7 +37,6 @@ function P_from_nkt(n::T, temp::T) where T<:AF
     return n * kB * temp
 end
 
-
 """
 
 """
