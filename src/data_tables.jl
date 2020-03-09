@@ -12,6 +12,10 @@ function tryparse(Float64, x::Float64)
     return x
 end
 
+function tryparse(Float64, x::Int64)
+    return float(x)
+end
+
 function tryparse(Float64, x::Missing)
     return NaN
 end
@@ -99,3 +103,18 @@ function tabulate_abundances(dir::String=datdir)
 end
 
 const dfa = tabulate_abundances()
+
+"""
+
+"""
+function tabulate_VALIIIc(dir::String=datdir)
+    @assert isdir(dir)
+
+    # read it in
+    header = ["h", "m", "τ_500", "T", "V", "n_H", "n_e", "Ptot", "Pg_Ptot", "ρ"]
+    df = CSV.read(dir*"VALIIIC.txt", header=header, comment="#", delim=" ", ignorerepeated=true)
+    col_to_float!(df, names(df)...)
+    return df
+end
+
+const dfv = tabulate_VALIIIc()
