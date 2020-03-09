@@ -94,14 +94,28 @@ Pg = 1.13e5
 # stimulated emission and the conversion term
 SE = (1.0 .- exp10.(-1.2398e4./λ.*SA.temp_to_theta(T)))
 PT = (1.0 + SA.ΦT(T, "H")/Pe)
+pg = (mH * sum(filter(!isnan, dfa.A .* dfa.Weight)))
 
 # neutral fraction
 frac = SA.neutral_fraction(T, Pe, "H")
 
 # sources of opacity
 κcont = SA.κ_tot(λ, T, Pe, Pg)
-κe = SA.κ_e(Pe, Pg)
-κHbf = SA.κ_H_bf(λ, T, Pe)
-κHff = SA.κ_H_ff(λ, T, Pe)
-κHmbf = SA.κ_H_minus_bf(λ, T, Pe)
-κHmff = SA.κ_H_minus_ff(λ, T, Pe)
+κHmbf = SA.κ_H_minus_bf(λ, T, Pe) .* SE ./ PT ./ pg
+κHmff = SA.κ_H_minus_ff(λ, T, Pe) ./ PT ./ pg
+κHbf = SA.κ_H_bf(λ, T, Pe) .* SE ./ PT ./ pg
+κHff = SA.κ_H_ff(λ, T, Pe) .* SE ./ PT ./ pg
+κe = SA.κ_e(Pe, Pg) ./ pg
+
+# calculate continuum opacity as function of Pe
+κconts = SA.κ_tot.(λ, dfv.T, Pe2, dfv.Pg_Ptot .* dfv.Ptot)
+
+# now plot it
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
+ax1.plot(dfv.τ_500, κconts, "k-")
+ax1.set_yscale("log")
+ax1.set_xlabel(L"\tau_{500}")
+ax1.set_ylabel(L"\kappa_{500}\ ({\rm cm}^2\ {\rm g}^{-1})")
+fig.savefig(outdir*"hw9_kappa.pdf")
+plt.clf(); plt.close()
