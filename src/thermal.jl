@@ -68,6 +68,16 @@ function ΦT(temp::T, species::String; ion::Symbol=:First) where T<:AF
     return 1.2020e9 * U1 * θ^(-5.0/2.0) * exp10(-θ * χ(species, ion)) / U0
 end
 
+"""
+
+Calculate the neutral fraction of an element. Only consider 1st ionization.
+"""
+function neutral_fraction(temp::T, Pe::T, species::String) where T<:AF
+    frac = ΦT(temp, species) / Pe
+    return (one(T)/frac)/((one(T)/frac) + one(T))
+end
+
+
 # wien displacement law (cm and Hz and K)
 λmax(T::t) where t<:Real = 0.290/T
 νmax(T::t) where t<:Real = 5.88e10 * T

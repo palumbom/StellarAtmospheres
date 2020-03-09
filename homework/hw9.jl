@@ -70,3 +70,38 @@ ax1.set_ylabel(L"{\rm Contribution\ to\ } n_{\rm e}")
 ax1.legend()
 fig.savefig(outdir*"hw9_f_ne.pdf")
 plt.clf(); plt.close()
+
+# plot the electron pressures
+fig = plt.figure()
+ax1 = fig.add_subplot(111)
+ax1.plot(dfv.h, Pe1, "k--", label="Ideal Gas")
+ax1.plot(dfv.h, Pe2, "k-", label="Iterative")
+ax1.set_xlim(0,800)
+ax1.invert_xaxis()
+ax1.set_yscale("log")
+ax1.set_xlabel(L"{\rm Height\ (km)}")
+ax1.set_ylabel(L"P_e\ ({\rm dyne\ cm}^{-2})")
+ax1.legend()
+fig.savefig(outdir*"hw9_Pe.pdf")
+plt.clf(); plt.close()
+
+# parameters for total opacity
+T = 6420.0
+Pe = 57.0
+Pg = 1.13e5
+λ = 5000.0
+
+# stimulated emission and the conversion term
+SE = (1.0 .- exp10.(-1.2398e4./λ.*SA.temp_to_theta(T)))
+PT = (1.0 + SA.ΦT(T, "H")/Pe)
+
+# neutral fraction
+frac = SA.neutral_fraction(T, Pe, "H")
+
+# sources of opacity
+κcont = SA.κ_tot(λ, T, Pe, Pg)
+κe = SA.κ_e(Pe, Pg)
+κHbf = SA.κ_H_bf(λ, T, Pe)
+κHff = SA.κ_H_ff(λ, T, Pe)
+κHmbf = SA.κ_H_minus_bf(λ, T, Pe)
+κHmff = SA.κ_H_minus_ff(λ, T, Pe)

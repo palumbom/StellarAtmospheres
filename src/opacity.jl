@@ -138,6 +138,14 @@ end
 
 """
 
+Gray Eq. 8.17.
+"""
+function κ_e(Pe::T, Pg::T) where T<:AF
+    return αe * (Pe / (Pg - Pe)) * sum(filter(!isnan, dfa.A))
+end
+
+"""
+
 Gray Eq. 8.18 abridged
 """
 function κ_tot(λ::T, temp::T, Pe::T) where T<:AF
@@ -152,4 +160,26 @@ function κ_tot(λ::T, temp::T, Pe::T) where T<:AF
     Φs = ΦT(temp, "H", ion=:First)
     χλ = 1.2398e4/λ
     return ((κHbf + κHff + κHmbf)*(one(T) - exp10(-χλ*θ)) + κHmff)/(one(T) + Φs/Pe)
+end
+
+"""
+
+Gray Eq. 8.18 abridged, with electron scattering in units of cm²/g
+"""
+function κ_tot(λ::T, temp::T, Pe::T, Pg::T) where T<:AF
+    # calculate each opacity
+    κe = κ_e(Pe, Pg)
+    κHbf = κ_H_bf(λ, temp, Pe)
+    κHff = κ_H_ff(λ, temp, Pe)
+    κHmbf = κ_H_minus_bf(λ, temp, Pe)
+    κHmff = κ_H_minus_ff(λ, temp, Pe)
+
+    # other quantities
+    θ = temp_to_theta(temp)
+    Φs = ΦT(temp, "H", ion=:First)
+    χλ = 1.2398e4/λ
+
+    # sum to total and convert
+    tot = ((κHbf + κHff + κHmbf)*(one(T) - exp10(-χλ*θ)) + κHmff)/(one(T) + Φs/Pe) + κe
+    return tot/(mH * sum(filter(!isnan, dfa.A .* dfa.Weight)))
 end
