@@ -119,3 +119,7 @@ ax1.set_xlabel(L"\tau_{500}")
 ax1.set_ylabel(L"\kappa_{500}\ ({\rm cm}^2\ {\rm g}^{-1})")
 fig.savefig(outdir*"hw9_kappa.pdf")
 plt.clf(); plt.close()
+
+# verify opacity
+dτ = diff(dfv.τ_500)
+dP = diff(dfv.Ptot)
