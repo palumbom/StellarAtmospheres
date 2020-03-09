@@ -16,11 +16,13 @@ function calc_Pe(temp::T, Pg::T; atol=1e-4) where T<:AF
     Pe = Pe0
     i = 0
     while true
+        i += 1
         num = sum(filter(!isnan, Aj.*(Φj./Pe)./(one(T).+(Φj./Pe))))
         den = sum(filter(!isnan, Aj.*(one(T).+(Φj./Pe)./(one(T) .+ (Φj./Pe)))))
 
         # return if converged
         if abs(Pe - Pg * num/den) <= atol
+            # @show i
             return Pg * num/den
         end
 
