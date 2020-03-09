@@ -13,38 +13,6 @@ function χ(species::String, ion::Symbol)
     return dfi[findfirst(dfi.Species .== species), ion]
 end
 
-
-"""
-
-"""
-function ΦT(;temp::T=NaN, species::String="", ion::Symbol=:First) where T<:AF
-    @assert !isnan(temp)
-    @assert !isempty(species)
-    return ΦT(temp, species, ion=ion)
-end
-
-function ΦT(temp::T, species::String; ion::Symbol=:First) where T<:AF
-    if !(species in dfi.Species)
-        println(species)
-    end
-    @assert species in dfp.Species
-
-    # figure out what the next ionization is
-    if species == "H"
-        ionspec = "HII"
-    elseif species == "H-"
-        ionspec = "H"
-    else
-        ionspec = species * "+"
-    end
-
-    # now do the math
-    θ = temp_to_theta(temp)
-    U0 = exp10(calc_partition(temp, species))
-    U1 = exp10(calc_partition(temp, ionspec))
-    return 1.2020e9 * U1 * θ^(-5.0/2.0) * exp10(-θ * χ(species, ion)) / U0
-end
-
 """
 
 Gray Eq. 8.3
