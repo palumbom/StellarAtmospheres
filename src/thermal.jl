@@ -77,6 +77,31 @@ function neutral_fraction(temp::T, Pe::T, species::String) where T<:AF
     return (one(T)/frac)/((one(T)/frac) + one(T))
 end
 
+function species_fraction(temp::T, Pe::T, species::String; ion::String="Zeroth") where T<:AF
+    @assert ion in ["Zeroth", "First", "Second"]
+    if ((species == "H") | (species == "He"))
+        @assert ion in ["Zeroth", "First"]
+        n1n0 = ΦT(temp, "H") / Pe
+        if ion == "Zeroth"
+            return (one(T)/n1n0)/((one(T)/n1n0) + one(T))
+        elseif ion == "First"
+            return one(T)/((one(T)/n1n0) + one(T))
+        end
+    end
+
+    # general case
+    n1n0 =  ΦT(temp, species) / Pe
+    n2n1 =  ΦT(temp, species * "+") / Pe
+
+    if ion == "Zeroth"
+        return (one(T)/n1n0)/((one(T)/n1n0) + one(T) + n2n1)
+    elseif ion == "First"
+        return one(T)/((one(T)/n1n0) + one(T) + n2n1)
+    elseif ion == "Second"
+        return n2n1/((one(T)/n1n0) + one(T) + n2n1)
+    end
+end
+
 
 # wien displacement law (cm and Hz and K)
 λmax(T::t) where t<:Real = 0.290/T
