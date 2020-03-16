@@ -105,6 +105,7 @@ Pg = 1.13e5
 SE = (1.0 .- exp10.(-1.2398e4./λ.*SA.temp_to_theta(T)))
 PT = (1.0 + SA.ΦT(T, "H")/Pe)
 pg = (SA.mH * sum(filter(!isnan, dfa.A .* dfa.Weight)))
+pg = 2.2701e-24
 
 # neutral fraction
 frac = SA.neutral_fraction(T, Pe, "H")
