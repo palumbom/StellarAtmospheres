@@ -108,7 +108,29 @@ PT = (1.0 + SA.ΦT(T, "H")/Pe)
 pg = (sum(filter(!isnan, dfa.A .* dfa.Weight)) / SA.NA)
 
 # neutral fraction
-frac = SA.neutral_fraction(T, Pe, "H")
+frac = SA.species_fraction(T, Pe, "H")
+
+# sources of opacity
+κcont = SA.κ_tot(λ, T, Pe, Pg)
+κHmbf = SA.κ_H_minus_bf(λ, T, Pe) .* SE ./ PT ./ pg
+κHmff = SA.κ_H_minus_ff(λ, T, Pe) ./ PT ./ pg
+κHbf = SA.κ_H_bf(λ, T, Pe) .* SE ./ PT ./ pg
+κHff = SA.κ_H_ff(λ, T, Pe) .* SE ./ PT ./ pg
+κe = SA.κ_e(Pe, Pg) ./ pg
+
+# parameters for total opacity
+T = 11572.0
+Pe = exp10(2.76)
+Pg = 1259.0
+λ = 15000.0
+
+# stimulated emission and the conversion term
+SE = (1.0 .- exp10.(-1.2398e4./λ.*SA.temp_to_theta(T)))
+PT = (1.0 + SA.ΦT(T, "H")/Pe)
+pg = (sum(filter(!isnan, dfa.A .* dfa.Weight)) / SA.NA)
+
+# neutral fraction
+frac = SA.species_fraction(T, Pe, "H")
 
 # sources of opacity
 κcont = SA.κ_tot(λ, T, Pe, Pg)
@@ -119,6 +141,7 @@ frac = SA.neutral_fraction(T, Pe, "H")
 κe = SA.κ_e(Pe, Pg) ./ pg
 
 # calculate continuum opacity as function of Pe
+λ = 5000.0
 κconts = SA.κ_tot.(λ, dfv.T, Pe2, dfv.Pg_Ptot .* dfv.Ptot)
 
 # verify opacity with hydrostatic equilibrium
