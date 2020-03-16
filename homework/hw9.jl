@@ -87,6 +87,7 @@ ax1 = fig.add_subplot(111)
 ax1.plot(dfv.h, Pe1, "k--", label="Ideal Gas")
 ax1.plot(dfv.h, Pe2, "k-", label="Iterative")
 ax1.set_xlim(0,800)
+ax1.set_ylim(0.01, 200)
 ax1.invert_xaxis()
 ax1.set_yscale("log")
 ax1.set_xlabel(L"{\rm Height\ (km)}")
@@ -104,8 +105,7 @@ Pg = 1.13e5
 # stimulated emission and the conversion term
 SE = (1.0 .- exp10.(-1.2398e4./λ.*SA.temp_to_theta(T)))
 PT = (1.0 + SA.ΦT(T, "H")/Pe)
-pg = (SA.mH * sum(filter(!isnan, dfa.A .* dfa.Weight)))
-pg = 2.2701e-24
+pg = (sum(filter(!isnan, dfa.A .* dfa.Weight)) / SA.NA)
 
 # neutral fraction
 frac = SA.neutral_fraction(T, Pe, "H")
@@ -121,17 +121,28 @@ frac = SA.neutral_fraction(T, Pe, "H")
 # calculate continuum opacity as function of Pe
 κconts = SA.κ_tot.(λ, dfv.T, Pe2, dfv.Pg_Ptot .* dfv.Ptot)
 
-# now plot it
-fig = plt.figure()
-ax1 = fig.add_subplot(111)
-ax1.plot(dfv.τ_500, κconts, "k-")
-ax1.set_yscale("log")
-ax1.set_xlabel(L"\tau_{500}")
-ax1.set_ylabel(L"\kappa_{500}\ ({\rm cm}^2\ {\rm g}^{-1})")
-fig.savefig(outdir*"hw9_kappa.pdf")
-plt.clf(); plt.close()
-
-# verify opacity
+# verify opacity with hydrostatic equilibrium
 g = exp10(4.4377)
 dτ = diff(dfv.τ_500)
 dP = diff(dfv.Ptot)
+
+κ_he = g ./ (dP ./ dτ)
+
+# now plot it
+fig = plt.figure(figsize=(8,6))
+gs = mpl.gridspec.GridSpec(2, 1, height_ratios=[2, 1])
+ax1 = plt.subplot(get(gs, 0))
+ax1.plot(dfv.τ_500, κconts, "k-", label="Calculated")
+ax1.plot(dfv.τ_500[2:end], κ_he, "k--", label="Hydrostatic Equilibrium")
+ax1.set_yscale("log")
+ax1.set_ylabel(L"\kappa_{500}\ ({\rm cm}^2\ {\rm g}^{-1})")
+ax1.legend()
+
+ax2 = plt.subplot(get(gs, 1))
+ax2.plot(dfv.τ_500[2:end], κconts[2:end] .- κ_he, "k-")
+ax2.set_xlim(ax1.get_xlim())
+ax2.set_xlabel(L"\tau_{500}")
+ax2.set_ylabel(L"{\rm Residual\ } \kappa_{500}\ ({\rm cm}^2\ {\rm g}^{-1})")
+
+fig.savefig(outdir*"hw9_kappa.pdf")
+plt.clf(); plt.close()

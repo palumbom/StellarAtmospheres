@@ -181,5 +181,5 @@ function κ_tot(λ::T, temp::T, Pe::T, Pg::T) where T<:AF
 
     # sum to total and convert
     tot = ((κHbf + κHff + κHmbf)*(one(T) - exp10(-χλ*θ)) + κHmff)/(one(T) + Φs/Pe) + κe
-    return tot/(mH * sum(filter(!isnan, dfa.A .* dfa.Weight)))
+    return tot/(sum(filter(!isnan, dfa.A .* dfa.Weight)) / NA)
 end

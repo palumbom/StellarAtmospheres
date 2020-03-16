@@ -11,4 +11,5 @@ const mp = 1.67262192369e-24
 const me = 9.1093837015e-28
 const αe = 6.6524587158e-25     # aka thomson cross-section
 const mH = 1.6735575e-24
+const NA = 6.022e23
 const loge = log10(exp(1.0))    # b/c Gray is weird
