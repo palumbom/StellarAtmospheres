@@ -152,19 +152,20 @@ dP = diff(dfv.Ptot)
 κ_he = g ./ (dP ./ dτ)
 
 # now plot it
-fig = plt.figure(figsize=(8,6))
+fig = plt.figure(figsize=(7.5,6))
 gs = mpl.gridspec.GridSpec(2, 1, height_ratios=[2, 1])
 ax1 = plt.subplot(get(gs, 0))
 ax1.plot(dfv.τ_500, κconts, "k-", label="Calculated")
 ax1.plot(dfv.τ_500[2:end], κ_he, "k--", label="Hydrostatic Equilibrium")
-ax1.set_yscale("log")
+ax1.set_xscale("log")
 ax1.set_ylabel(L"\kappa_{500}\ ({\rm cm}^2\ {\rm g}^{-1})")
 ax1.legend()
 
 ax2 = plt.subplot(get(gs, 1))
 ax2.plot(dfv.τ_500[2:end], κconts[2:end] .- κ_he, "k-")
-ax2.set_xlim(ax1.get_xlim())
 ax2.set_xlabel(L"\tau_{500}")
+ax2.set_xscale("log")
+ax2.set_xlim(ax1.get_xlim())
 ax2.set_ylabel(L"{\rm Residual\ } \kappa_{500}\ ({\rm cm}^2\ {\rm g}^{-1})")
 
 fig.savefig(outdir*"hw9_kappa.pdf")
