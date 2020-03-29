@@ -14,6 +14,7 @@ const AF = AbstractFloat
 include("constants.jl")
 include("utils.jl")
 include("expint.jl")
+include("voigt.jl")
 include("integrate.jl")
 # include("gauss_legendre.jl")
 include("differentiate.jl")
