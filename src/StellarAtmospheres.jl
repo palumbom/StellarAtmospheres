@@ -12,6 +12,7 @@ const AF = AbstractFloat
 
 # bring in constants and thermal stuff
 include("constants.jl")
+include("LineParams.jl")
 include("utils.jl")
 include("expint.jl")
 include("voigt.jl")
