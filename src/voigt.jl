@@ -1,7 +1,12 @@
+# a two-input voigt profile can be made from the complementary error function
 import SpecialFunctions.erfcx
 
 """
+    voigt(u, a)
 
+Return a voigt profile. This expression (source??) is from the complementary
+error function, which you can express the Faddeeva function in terms of,
+which you can express the Voigt function in terms off (woof).
 """
 function voigt(u::T, a::T) where T<:AF
     x = (u + im * a)
