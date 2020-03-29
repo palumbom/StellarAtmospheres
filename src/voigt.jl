@@ -18,11 +18,11 @@ end
 """
 
 """
-function calc_a(Pe::T, temp::T, line::LineParams) where T<:AF
+function calc_a(Pe::T, Pg::T, temp::T, line::LineParams) where T<:AF
     γn = calc_γn()
-    γ4 = calc_γ4()
-    γ6 = calc_γ6()
-    return
+    γ4 = calc_γ4(Pe, temp, line)
+    γ6 = calc_γ6(Pg, temp, line)
+    return γn + γ4 + γ6
 end
 
 # natural broadening
@@ -42,10 +42,12 @@ function calc_γ6(Pg::T, temp::T, line::LineParams)
 end
 
 # doppler wavelength
+calc_ΔλD(line::LineParams, temp::T, ξ::T) where T<:AF = calc_ΔλD(line.λ₀, temp, line.m, ξ)
 function calc_ΔλD(λ₀::T, temp::T, m::T, ξ::T) where T<:AF
     return (λ₀/c) * sqrt((2.0*kB*temp/m) + ξ^2.0)
 end
 
+calc_ΔλD(line::LineParams, temp::T, ξ::T) where T<:AF = calc_ΔλD(line.λ₀, temp, line.m, ξ)
 function calc_ΔνD(ν₀::T, temp::T, m::T, ξ::T) where T<:AF
     return (ν₀/c) * sqrt((2.0*kB*temp/m) + ξ^2.0)
 end

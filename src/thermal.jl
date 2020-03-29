@@ -101,16 +101,3 @@ function species_fraction(temp::T, Pe::T, species::String; ion::String="Zeroth")
         return n2n1/((one(T)/n1n0) + one(T) + n2n1)
     end
 end
-
-
-# wien displacement law (cm and Hz and K)
-λmax(T::t) where t<:Real = 0.290/T
-νmax(T::t) where t<:Real = 5.88e10 * T
-
-# convert λ to ν and ν to λ
-λ2ν(λ::T) where T<:Real = c/λ
-ν2λ(ν::T) where T<:Real = c/ν
-λ2ν̃(λ::T) where T<:Real = one(T)/λ
-ν̃2λ(ν̃::T) where T<:Real = one(T)/ν̃
-ν̃2ν(ν̃::T) where T<:Real = c*ν̃
-ν2ν̃(ν::T) where T<:Real = ν/c
