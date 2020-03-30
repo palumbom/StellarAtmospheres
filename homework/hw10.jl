@@ -34,6 +34,13 @@ println("log10(γ6) = " * string(log10(SA.calc_γ6(Pg, temp, NaD2))))
 println("ΔλD = " * string(SA.calc_ΔλD(temp, ξ, NaD2)))
 println("SE factor = " * string(SA.calc_SE(5890.0, temp)))
 
+# test opacity
+alph = SA.calc_α(5890.0, Pe, Pg, temp, ξ, NaD2)
+
+
+
+# opac = SA.κ_line(5890.0, Pe, Pg, temp, ξ, N_NE, NaD2)
+
 # get opacity profile for line 1
 # waves = range(5800.0, 6000.0, length=1000)
 # κprof = SA.κ_line(5890.0, Pe, Pg, temp, ξ, N_NE, NaD2)

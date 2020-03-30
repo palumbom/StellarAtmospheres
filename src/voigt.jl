@@ -21,6 +21,19 @@ end
 
 See Gray Eq. 11.46
 """
+function calc_α(λ::T, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
+    return line(λ, Pe, Pg, temp, ξ)
+end
+
+function calc_α(λ::AA{T,1}, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
+    return line.(λ, Pe, Pg, temp, ξ)
+end
+
+"""
+    c
+
+See Gray Eq. 11.46
+"""
 function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     # first calculate u and a from params provided
     u = calc_u(λ, temp, ξ, line)
@@ -34,22 +47,6 @@ function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     factor = (sqrt(π)* e^2/(line.m * c^2)) * (line.λ₀^2 * f/ΔλD)
     return factor * voigt(u, a)
 end
-
-"""
-
-
-Return a normalized voigt profile. See Gray Eq. 11.44 and subsequent text.
-"""
-function calc_α(λ::AA{T,1}, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
-    # get the profile
-    prof = line.(λ, Pe, Pg, temp, ξ)
-
-    # integrate over all frequencies
-    f = t -> line.(t, Pe, Pg, temp, ξ)
-    int = quadgk(f, 0.0, Inf)[1]
-    return prof./int
-end
-
 
 """
 

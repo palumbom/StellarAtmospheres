@@ -189,7 +189,7 @@ function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T) where 
     SE = calc_SE(λ, temp)
 
     # now return it
-    return 1.497e-2 * (voigt(u,a)/ΔνD) * A_term * N_Ne * calc_SE(λ, temp)
+    return 1.497e-2 * (voigt(u,a)/ΔνD) * A_term * f * N_Ne * calc_SE(λ, temp)
 end
 
 function calc_SE(λ::T, temp::T) where T<:AF
