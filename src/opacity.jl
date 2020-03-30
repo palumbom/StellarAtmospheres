@@ -183,14 +183,17 @@ function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T) where 
     ΔνD = calc_ΔνD(temp, ξ, line)
 
     # get abundance and sum of abundance-weighted masses
-    A = abundance_for_element(line.element)
-    Aμ = sum_abundance_weights()
+    A_term = abundance_for_element(line.element) / sum_abundance_weights()
 
     # get stimulated emission factor
-    θ = temp_to_theta(temp)
-    χλ = 1.2398e4/line.λ₀
-    SE = (one(T) - exp10(-χλ*θ))
+    SE = calc_SE(λ, temp)
 
     # now return it
-    return 1.497e-2 * (voigt(u,a)/ΔνD) * (A*f/Aμ) * (N_Ne) * SE
+    return 1.497e-2 * (voigt(u,a)/ΔνD) * A_term * N_Ne * calc_SE(λ, temp)
+end
+
+function calc_SE(λ::T, temp::T) where T<:AF
+    θ = temp_to_theta(temp)
+    χλ = 1.2398e4/λ
+    return one(T) - exp10(-χλ * θ)
 end

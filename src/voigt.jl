@@ -93,7 +93,6 @@ end
 Natural broadening damping factor. Gray Eq. 11.15 and subsequent text.
 """
 function calc_γn(line::LineParams)
-    # γu =
     return sum(line.A)
 end
 

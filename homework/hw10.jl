@@ -31,6 +31,8 @@ NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1], m=m, gu=2, g
 println("γn = " * string(SA.calc_γn(NaD2)))
 println("log10(γ4) = " * string(log10(SA.calc_γ4(Pe, temp, NaD2))))
 println("log10(γ6) = " * string(log10(SA.calc_γ6(Pg, temp, NaD2))))
+println("ΔλD = " * string(SA.calc_ΔλD(temp, ξ, NaD2)))
+println("SE factor = " * string(SA.calc_SE(5890.0, temp)))
 
 # get opacity profile for line 1
 # waves = range(5800.0, 6000.0, length=1000)
