@@ -3,6 +3,7 @@ struct LineParams{T<:AF}
     λ₀::T       # rest frame line center
     ν₀::T       # line center but ~frequency~
     A::AA{T,1}  # Einstein A coefficients
+    m::T        # mass of atomic in cgs
     gu::T       # statistical weight of upper level
     gl::T       # statistical weight of lower level
     logC4::T    # stark interaction constant
@@ -10,7 +11,7 @@ struct LineParams{T<:AF}
 end
 
 # make an outer constructor so you can't mess up arg order
-function LineParams(;λ₀=NaN, A=[NaN], gu=NaN, gl=NaN, logC4=NaN, logC6=NaN)
+function LineParams(;λ₀=NaN, A=[NaN], m=NaN, gu=NaN, gl=NaN, logC4=NaN, logC6=NaN)
     ν₀ = λ2ν(λ₀)
     return LineParams(λ₀, ν₀, A, gu, gl, logC4, logC6)
 end
