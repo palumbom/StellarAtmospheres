@@ -6,8 +6,8 @@ struct LineParams{T<:AF}
     ν₀::T           # line center but ~frequency~
     A::AA{T,1}      # Einstein A coefficients
     m::T            # mass of atomic in cgs
-    gu::T           # statistical weight of upper level
-    gl::T           # statistical weight of lower level
+    gu::Integer     # statistical weight of upper level
+    gl::Integer     # statistical weight of lower level
     logC4::T        # stark interaction constant
     logC6::T        # van der waals interaction constant
 end
@@ -28,6 +28,7 @@ function calc_logC6(element::String, n::Int, λ₀::T) where T<:AF
     # get ionization/excitation stuff
     I1 = I(element, :First)
     χ1 = χ(n, "Na")
+    χ1 = 0.0        # gives -31.7 which agrees with Gray for unknown reasons
     χλ = 1.2398e4/λ₀
 
     # calculate terms and return

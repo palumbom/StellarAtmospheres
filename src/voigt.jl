@@ -17,25 +17,13 @@ function voigt(u::T, a::T) where T<:AF
 end
 
 """
-    voigt(x, Pe, Pg, temp, ξ, line)
+    calc_α(x, Pe, Pg, temp, ξ, line)
 
-Wrapper function for call to LineParams functor, in case functors are spooky
-to you. (See function definition below).
-"""
-function voigt(x::T, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
-    return line(x, Pe, Pg, temp, ξ)
-end
-
-"""
-    (line::LineParams)(x, Pe, Pg, temp, ξ)
-
-This callable object is called a functor (think of it as an
-object method, but defined externally rather than internally).
 See Gray Eq. 11.46
 """
-function (line::LineParams)(x::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
+function calc_α(x::T, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
     # first calculate u and a from params provided
-    u = calc_u(x, line.λ₀, temp, line.m, ξ)
+    u = calc_u(x, temp, ξ, line)
     a = calc_a(Pe, Pg, temp, ξ, line)
 
     # now we need oscillator strength & doppler factor
@@ -69,7 +57,7 @@ end
 Lorentzian widths add naively. See Gray Eq. 11.44 and subsequent text.
 """
 function calc_γ(Pe::T, Pg::T, temp::T, line::LineParams) where T<:AF
-    γn = calc_γn()
+    γn = calc_γn(line)
     γ4 = calc_γ4(Pe, temp, line)
     γ6 = calc_γ6(Pg, temp, line)
     return γn + γ4 + γ6
@@ -81,8 +69,8 @@ end
 Natural broadening damping factor. Gray Eq. 11.15 and subsequent text.
 """
 function calc_γn(line::LineParams)
-    γu = 4π * sum(line.A)
-    return
+    # γu =
+    return 4π * sum(line.A)
 end
 
 """
