@@ -28,20 +28,32 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1], m=m, gu=4, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1], m=m, gu=2, gl=2, logC4=-15.33)
 
 # compare some values
+SE = SA.calc_SE(5890.0, temp)
 println("γn = " * string(SA.calc_γn(NaD2)))
 println("log10(γ4) = " * string(log10(SA.calc_γ4(Pe, temp, NaD2))))
 println("log10(γ6) = " * string(log10(SA.calc_γ6(Pg, temp, NaD2))))
 println("ΔλD = " * string(SA.calc_ΔλD(temp, ξ, NaD2)))
-println("SE factor = " * string(SA.calc_SE(5890.0, temp)))
+println("SE factor = " * string(SE))
 
 # test opacity
 alph = SA.calc_α(5890.0, Pe, Pg, temp, ξ, NaD2)
 
+@show alph
 
+# continuous opacity
+PT = (1.0 + SA.ΦT(temp, "H")/Pe)
+pg = SA.sum_abundance_weights()
+κcont = SA.κ_tot(5890.0, temp, Pe, Pg)
+κHmbf = SA.κ_H_minus_bf(5890.0, temp, Pe) * SE / PT / pg
+κHmff = SA.κ_H_minus_ff(5890.0, temp, Pe) / PT / pg
+κHbf = SA.κ_H_bf(5890.0, temp, Pe) * SE / PT / pg
+κHff = SA.κ_H_ff(5890.0, temp, Pe) * SE / PT / pg
+κe = SA.κ_e(Pe, Pg) / pg
 
-# opac = SA.κ_line(5890.0, Pe, Pg, temp, ξ, N_NE, NaD2)
-
-# get opacity profile for line 1
-# waves = range(5800.0, 6000.0, length=1000)
-# κprof = SA.κ_line(5890.0, Pe, Pg, temp, ξ, N_NE, NaD2)
-# plt.plot(waves, κprof)
+# print them
+@show κcont
+@show κHmbf
+@show κHmff
+@show κHbf
+@show κHff
+@show κe
