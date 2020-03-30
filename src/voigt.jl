@@ -21,7 +21,7 @@ end
 
 See Gray Eq. 11.46
 """
-function calc_α(x::T, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
+function (line::LineParams)(x::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     # first calculate u and a from params provided
     u = calc_u(x, temp, ξ, line)
     a = calc_a(Pe, Pg, temp, ξ, line)
@@ -70,7 +70,7 @@ Natural broadening damping factor. Gray Eq. 11.15 and subsequent text.
 """
 function calc_γn(line::LineParams)
     # γu =
-    return 4π * sum(line.A)
+    return sum(line.A)
 end
 
 """
@@ -79,7 +79,7 @@ end
 Stark broadening damping factor. Gray Eq. 11.27.
 """
 function calc_γ4(Pe::T, temp::T, line::LineParams) where T<:AF
-    return 19.0 + (2.0/3.0) * line.logC4 + log10(Pe) - (5.0/6.0) * log10(temp)
+    return exp10(19.0 + (2.0/3.0) * line.logC4 + log10(Pe) - (5.0/6.0) * log10(temp))
 end
 
 """
@@ -88,7 +88,7 @@ end
 Van der Waals broadening damping factor. Gray Eq. 11.29.
 """
 function calc_γ6(Pg::T, temp::T, line::LineParams) where T<:AF
-    return 20.0 + 0.4 * line.logC6 + log10(Pg) - 0.7 * log10(temp)
+    return exp10(20.0 + 0.4 * line.logC6 + log10(Pg) - 0.7 * log10(temp))
 end
 
 # doppler wavelength
