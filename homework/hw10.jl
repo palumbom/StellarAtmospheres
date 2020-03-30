@@ -21,11 +21,15 @@ Pe1 = SA.P_from_nkt.(dfv.n_e[ind], temp)
 Pe = SA.calc_Pe.(temp, Pg, Pe1)
 ξ = dfv.V[49] * 1000.0 * 100 # convert km/s -> cm/s
 N_NE = 0.8609 # ground fraction
+nH = dfv.n_H[ind]
+ρ = dfv.ρ[ind]
+f_ground = 0.8609
+f_neutral = 6.5418e-4
 
 # make LineParams object instances for NaD lines
 m = 3.817541e-23
-NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1], m=m, gu=4, gl=2, logC4=-15.17)
-NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1], m=m, gu=2, gl=2, logC4=-15.33)
+NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, gu=4, gl=2, logC4=-15.17)
+NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # compare some values
 SE = SA.calc_SE(5890.0, temp)
@@ -35,10 +39,9 @@ println("log10(γ6) = " * string(log10(SA.calc_γ6(Pg, temp, NaD2))))
 println("ΔλD = " * string(SA.calc_ΔλD(temp, ξ, NaD2)))
 println("SE factor = " * string(SE))
 
-# test opacity
+# get alpha and convert to opacity
 alph = SA.calc_α(5890.0, Pe, Pg, temp, ξ, NaD2)
-
-@show alph
+opac = alph * f_ground * f_neutral * SA.abundance_for_element("Na") * nH / ρ
 
 # continuous opacity
 PT = (1.0 + SA.ΦT(temp, "H")/Pe)

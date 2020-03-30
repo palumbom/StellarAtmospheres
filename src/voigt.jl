@@ -12,8 +12,11 @@ function in terms of, which you can express the Voigt function in terms off
 Gaussian and Lorentzian profiles (you'll just have to believe me).
 """
 function voigt(u::T, a::T) where T<:AF
-    x = (u + im * a)
-    return real(erfcx(-im * x))
+    return real(faddeeva(u + im * a))
+end
+
+function faddeeva(x::Complex{T}) where T<:AF
+    return erfcx(-im * x)
 end
 
 """
@@ -44,8 +47,13 @@ function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     ΔλD = calc_ΔλD(temp, ξ, line)
 
     # put it all together and return
-    factor = (sqrt(π)* e^2/(line.m * c^2)) * (line.λ₀^2 * f/ΔλD)
-    return factor * voigt(u, a)
+    factor = sqrt(π) * e^2/(me * c^2) * line.λ₀^2 * f / ΔλD
+    return factor * voigt(u, a)/norm_voigt(a)
+end
+
+function norm_voigt(a)
+    f = t -> voigt(t, a)
+    return quadgk(f, -Inf, Inf)[1]
 end
 
 """
@@ -60,7 +68,7 @@ end
 """
 function calc_a(Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
     γ = calc_γ(Pe, Pg, temp, line)
-    return (γ/(4π)) / calc_ΔνD(temp, ξ, line)
+    return (γ * line.λ₀^2/(4π*c)) / calc_ΔλD(temp, ξ, line)
 end
 
 """
@@ -69,7 +77,7 @@ end
 Compute the oscillator strength as in Gray Eq. 11.12
 """
 function calc_f(line::LineParams) where T<:AF
-    return 1.884e-15 * line.λ₀^2 * line.gu * line.A[1] / line.gl
+    return 1.884e-15 * line.λ₀^2 * (line.gu/line.gl) * line.A[1]
 end
 
 """
@@ -90,7 +98,7 @@ end
 Natural broadening damping factor. Gray Eq. 11.15 and subsequent text.
 """
 function calc_γn(line::LineParams)
-    return sum(line.A)
+    return 4π * sum(line.A)
 end
 
 """
