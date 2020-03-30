@@ -15,8 +15,8 @@ const NA = 6.022e23
 const loge = log10(exp(1.0))    # b/c Gray is weird
 
 # wien displacement law (cm and Hz and K)
-λmax(temp::T) where t<:Real = 0.290/temp
-νmax(temp::T) where t<:Real = 5.88e10 * temp
+λmax(temp::T) where T<:Real = 0.290/temp
+νmax(temp::T) where T<:Real = 5.88e10 * temp
 
 # convert λ to ν and ν to λ
 λ2ν(λ::T) where T<:Real = c/λ

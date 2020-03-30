@@ -1,28 +1,5 @@
 """
 
-"""
-function χ(species::String, ion::Symbol)
-    @assert ion in names(dfi)
-
-    # immediately return for H- in eV
-    if species == "H-"
-        return 0.754195
-    end
-
-    # else read from the table
-    return dfi[findfirst(dfi.Species .== species), ion]
-end
-
-"""
-
-Gray Eq. 8.3
-"""
-function χ(n::Int, species::String)
-    return χ(species, :First) - ((h*R*c)/n^2) * eV
-end
-
-"""
-
 Gray Eq. 8.4. Returns value in cm^2 per neutral H atom
 """
 function α_bf_H(λ::T, n::Int) where T<:AF

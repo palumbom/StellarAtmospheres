@@ -22,6 +22,7 @@ include("differentiate.jl")
 include("axis_strings.jl")
 include("thermal.jl")
 include("data_tables.jl")
+include("ionizations.jl")
 include("partition.jl")
 include("opacity.jl")
 include("pressure.jl")
@@ -33,6 +34,6 @@ export Bν, Bλ, Bν̃, λmax, νmax,
        ν2ν̃, SνPoly, SνPlanck,
        Cν, Iν₀, IνEB, ℱν₀,
        ℱντ, ℱτ, ℱνEB, Hν₀,
-       HνEB, SB, deriv, deriv2
+       HνEB, SB, LineParams
 
 end # module
