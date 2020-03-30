@@ -17,17 +17,17 @@ function voigt(u::T, a::T) where T<:AF
 end
 
 """
-    calc_α(x, Pe, Pg, temp, ξ, line)
+    c
 
 See Gray Eq. 11.46
 """
-function (line::LineParams)(x::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
+function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     # first calculate u and a from params provided
-    u = calc_u(x, temp, ξ, line)
+    u = calc_u(λ, temp, ξ, line)
     a = calc_a(Pe, Pg, temp, ξ, line)
 
     # now we need oscillator strength & doppler factor
-    f = calc_f(x, line)
+    f = calc_f(line)
     ΔλD = calc_ΔλD(temp, ξ, line)
 
     # put it all together and return
@@ -35,12 +35,27 @@ function (line::LineParams)(x::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     return factor * voigt(u, a)
 end
 
+"""
+
+
+Return a normalized voigt profile. See Gray Eq. 11.44 and subsequent text.
+"""
+function calc_α(λ::AA{T,1}, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
+    # get the profile
+    prof = line.(λ, Pe, Pg, temp, ξ)
+
+    # integrate over all frequencies
+    f = t -> line.(t, Pe, Pg, temp, ξ)
+    int = quadgk(f, 0.0, Inf)[1]
+    return prof./int
+end
+
 
 """
 
 """
-function calc_u(x::T, temp::T, ξ::T, line::LineParams) where T<:AF
-    return (x - line.λ₀)/calc_ΔλD(temp, ξ, line)
+function calc_u(λ::T, temp::T, ξ::T, line::LineParams) where T<:AF
+    return (λ - line.λ₀)/calc_ΔλD(temp, ξ, line)
 end
 
 """
@@ -48,7 +63,16 @@ end
 """
 function calc_a(Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
     γ = calc_γ(Pe, Pg, temp, line)
-    return (γ/(4π)) * (line.λ₀^2/c) * one(T)/calc_ΔλD(temp, ξ, line)
+    return (γ/(4π)) / calc_ΔνD(temp, ξ, line)
+end
+
+"""
+    calc_f()
+
+Compute the oscillator strength as in Gray Eq. 11.12
+"""
+function calc_f(line::LineParams) where T<:AF
+    return 1.884e-15 * line.λ₀^2 * line.gu * line.A[1] / line.gl
 end
 
 """

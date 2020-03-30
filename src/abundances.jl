@@ -1,3 +1,6 @@
+"""
+
+"""
 function tabulate_abundances(dir::String=datdir)
     @assert isdir(dir)
 
@@ -8,4 +11,18 @@ function tabulate_abundances(dir::String=datdir)
     return df
 end
 
+# constant global variable
 const dfa = tabulate_abundances()
+
+"""
+
+"""
+function abundance_for_element(element::String)
+    # find the appropriate row
+    ind = findfirst(dfa.Element .== element)
+    return dfa[ind, :A]
+end
+
+function sum_abundance_weights()
+    return sum(filter(!isnan, dfa.A .* dfa.Weight)) / NA
+end

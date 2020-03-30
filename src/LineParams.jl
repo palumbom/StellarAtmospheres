@@ -12,6 +12,9 @@ struct LineParams{T<:AF}
     logC6::T        # van der waals interaction constant
 end
 
+# kluge to make something work
+length(line::LineParams) = 1
+
 # make an outer constructor so you can't mess up arg order
 function LineParams(;element="", n=NaN, λ₀=NaN, A=[NaN], m=NaN, gu=NaN, gl=NaN, logC4=NaN)
     ν₀ = λ2ν(λ₀)
@@ -35,13 +38,4 @@ function calc_logC6(element::String, n::Int, λ₀::T) where T<:AF
     term1 = (I1 - χ1 - χλ)^2
     term2 = (I1 - χ1)^2
     return log10(0.3e-30 * (one(T)/term1 - one(T)/term2))
-end
-
-"""
-    calc_f()
-
-Compute the oscillator strength as in Gray Eq. 11.12
-"""
-function calc_f(λ::T, line::LineParams) where T<:AF
-    return 1.884e-15 * λ^2 * line.gu * line.A[1] / line.gl
 end

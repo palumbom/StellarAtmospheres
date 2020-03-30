@@ -158,5 +158,39 @@ function κ_tot(λ::T, temp::T, Pe::T, Pg::T) where T<:AF
 
     # sum to total and convert
     tot = ((κHbf + κHff + κHmbf)*(one(T) - exp10(-χλ*θ)) + κHmff)/(one(T) + Φs/Pe) + κe
-    return tot/(sum(filter(!isnan, dfa.A .* dfa.Weight)) / NA)
+    return tot/sum_abundance_weights()
+end
+
+"""
+
+See Gray Eq. 11.53
+"""
+function κ_line(λ::T, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T, line::LineParams) where T<:Real
+    return line(λ, Pe, Pg, temp, ξ, N_Ne)
+end
+
+function κ_line(λ::AA{T,1}, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T, line::LineParams) where T<:Real
+    return line.(λ, Pe, Pg, temp, ξ, N_Ne)
+end
+
+function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T) where T<:Real
+    # first calculate u and a from params provided
+    u = calc_u(λ, temp, ξ, line)
+    a = calc_a(Pe, Pg, temp, ξ, line)
+
+    # now we need oscillator strength & doppler factor
+    f = calc_f(line)
+    ΔνD = calc_ΔνD(temp, ξ, line)
+
+    # get abundance and sum of abundance-weighted masses
+    A = abundance_for_element(line.element)
+    Aμ = sum_abundance_weights()
+
+    # get stimulated emission factor
+    θ = temp_to_theta(temp)
+    χλ = 1.2398e4/line.λ₀
+    SE = (one(T) - exp10(-χλ*θ))
+
+    # now return it
+    return 1.497e-2 * (voigt(u,a)/ΔνD) * (A*f/Aμ) * (N_Ne) * SE
 end
