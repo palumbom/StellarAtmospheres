@@ -12,9 +12,6 @@ struct LineParams{T<:AF}
     logC6::T        # van der waals interaction constant
 end
 
-# kluge to make something work
-length(line::LineParams) = 1
-
 # make an outer constructor so you can't mess up arg order
 function LineParams(;element="", n=NaN, λ₀=NaN, A=[NaN], m=NaN, gu=NaN, gl=NaN, logC4=NaN)
     ν₀ = λ2ν(λ₀)

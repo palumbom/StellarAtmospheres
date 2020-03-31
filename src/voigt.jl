@@ -11,8 +11,8 @@ function in terms of, which you can express the Voigt function in terms off
 (woof). But this is much faster than manually computing and convolving
 Gaussian and Lorentzian profiles (you'll just have to believe me).
 """
-function voigt(u::T, a::T) where T<:AF
-    return real(faddeeva(u + im * a))
+function voigt(u::T, a::T, ΔνD::T) where T<:AF
+    return real(faddeeva(u + im * a))/(sqrt(π) * ΔνD)
 end
 
 function faddeeva(x::Complex{T}) where T<:AF
@@ -45,14 +45,16 @@ function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     # now we need oscillator strength & doppler factor
     f = calc_f(line)
     ΔλD = calc_ΔλD(temp, ξ, line)
+    ΔνD = calc_ΔνD(temp, ξ, line)
 
     # put it all together and return
-    factor = sqrt(π) * e^2/(me * c^2) * line.λ₀^2 * f / ΔλD
-    return factor * voigt(u, a)/norm_voigt(a)
+    # factor = sqrt(π) * e^2/(me * c^2) * line.λ₀^2 * f / ΔλD
+    factor = sqrt(π) * e^2/(me * c) * f / ΔνD
+    return factor * voigt(u, a, ΔνD)
 end
 
-function norm_voigt(a)
-    f = t -> voigt(t, a)
+function norm_voigt(a,  ΔλD)
+    f = t -> voigt(t, a,  ΔλD)
     return quadgk(f, -Inf, Inf)[1]
 end
 
@@ -60,7 +62,8 @@ end
 
 """
 function calc_u(λ::T, temp::T, ξ::T, line::LineParams) where T<:AF
-    return (λ - line.λ₀)/calc_ΔλD(temp, ξ, line)
+    # return (λ - line.λ₀)/calc_ΔλD(temp, ξ, line)
+    return (λ2ν(λ) - line.ν₀)/calc_ΔνD(temp, ξ, line)
 end
 
 """
@@ -68,7 +71,8 @@ end
 """
 function calc_a(Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
     γ = calc_γ(Pe, Pg, temp, line)
-    return (γ * line.λ₀^2/(4π*c)) / calc_ΔλD(temp, ξ, line)
+    # return (γ * line.λ₀^2/(4π*c))/calc_ΔλD(temp, ξ, line)
+    return γ / (4π * calc_ΔνD(temp, ξ, line))
 end
 
 """
