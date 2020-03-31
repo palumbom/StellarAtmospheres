@@ -14,7 +14,7 @@ end
 
 # make an outer constructor so you can't mess up arg order
 function LineParams(;element="", n=NaN, λ₀=NaN, A=[NaN], m=NaN, gu=NaN, gl=NaN, logC4=NaN)
-    ν₀ = λ2ν(λ₀)
+    ν₀ = λ2ν(λ₀ * 1e-8)
     logC6 = calc_logC6(element, n, λ₀)
     return LineParams(element, n, λ₀, ν₀, A, m, gu, gl, logC4, logC6)
 end

@@ -54,9 +54,7 @@ function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
     a = calc_a(Pe, Pg, temp, ΔνD, line)
 
     # put it all together and return
-    # factor = sqrt(π) * e^2/(me * c^2) * line.λ₀^2 * f / ΔλD
     factor = π * e^2/(me * c) * f
-    # factor = sqrt(π) * e^2 /(me * c *  ΔνD) * f
     return factor * voigt(u, a, ΔνD)
 end
 
@@ -64,7 +62,7 @@ end
 
 """
 function calc_u(λ::T, ΔνD::T, line::LineParams) where T<:AF
-    return (λ - line.λ₀)/(ΔνD * line.λ₀^2/c)
+    return (λ2ν(λ*1e-8) - line.ν₀)/(ΔνD)
 end
 
 """

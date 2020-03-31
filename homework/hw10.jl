@@ -41,11 +41,12 @@ SE = SA.calc_SE(5890.0, temp)
 
 # get alpha and convert to opacity
 alph = SA.calc_α(5890.0, Pe, Pg, temp, ξ, NaD2)
-opac = alph * f_ground * f_neutral * SA.abundance_for_element("Na") * nH / ρ
+opac = alph * f_ground * f_neutral * SA.abundance_for_element("Na") * nH * SE/ ρ
 
-# waves = range(5880.0, 5900.0, length=1000)
-# alpha = SA.calc_α(waves, Pe, Pg, temp, ξ, NaD2)
-# plt.plot(waves, alpha)
+waves = range(5880.0, 5900.0, length=1000)
+alpha = SA.calc_α(waves, Pe, Pg, temp, ξ, NaD2)
+opacity  = alpha .* f_ground .* f_neutral .* SA.abundance_for_element("Na") .* nH .* SE ./ ρ
+plt.plot(waves, opacity)
 
 # # continuous opacity
 # PT = (1.0 + SA.ΦT(temp, "H")/Pe)
