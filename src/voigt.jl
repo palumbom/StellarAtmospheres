@@ -1,11 +1,14 @@
 # import special function needed for voigt
 import SpecialFunctions.erfcx
 
+using PyCall
+apm = pyimport("astropy.modeling.functional_models")
+
 """
     voigt(u, a)
 
-Return a voigt profile. Gray calls this the Hjerting function (see
-Gray Eq. 11.46 and text in vicinity. This expression (source??) is from
+Return a voigt profile. Gray uses the Hjerting function (see
+Gray Eq. 11.46 and text in vicinity). This expression (source??) is from
 the complementary error function, which you can express the Faddeeva
 function in terms of, which you can express the Voigt function in terms off
 (woof). But this is much faster than manually computing and convolving
@@ -13,6 +16,10 @@ Gaussian and Lorentzian profiles (you'll just have to believe me).
 """
 function voigt(u::T, a::T, ΔνD::T) where T<:AF
     return real(faddeeva(u + im * a))/(sqrt(π) * ΔνD)
+end
+
+function hjerting(u::T, a::T) where T<:AF
+    return real(faddeeva(u + im * a))
 end
 
 function faddeeva(x::Complex{T}) where T<:AF
@@ -38,36 +45,34 @@ end
 See Gray Eq. 11.46
 """
 function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
-    # first calculate u and a from params provided
-    u = calc_u(λ, temp, ξ, line)
-    a = calc_a(Pe, Pg, temp, ξ, line)
-
-    # now we need oscillator strength & doppler factor
+    # we need oscillator strength & doppler factor
     f = calc_f(line)
-    ΔλD = calc_ΔλD(temp, ξ, line)
     ΔνD = calc_ΔνD(temp, ξ, line)
+
+    # first calculate u and a from params provided
+    u = calc_u(λ, ΔνD, line)
+    a = calc_a(Pe, Pg, temp, ΔνD, line)
 
     # put it all together and return
     # factor = sqrt(π) * e^2/(me * c^2) * line.λ₀^2 * f / ΔλD
     factor = π * e^2/(me * c) * f
+    # factor = sqrt(π) * e^2 /(me * c *  ΔνD) * f
     return factor * voigt(u, a, ΔνD)
 end
 
 """
 
 """
-function calc_u(λ::T, temp::T, ξ::T, line::LineParams) where T<:AF
-    # return (λ - line.λ₀)/calc_ΔλD(temp, ξ, line)
-    return (λ2ν(λ) - line.ν₀)/calc_ΔνD(temp, ξ, line)
+function calc_u(λ::T, ΔνD::T, line::LineParams) where T<:AF
+    return (λ - line.λ₀)/(ΔνD * line.λ₀^2/c)
 end
 
 """
 
 """
-function calc_a(Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
+function calc_a(Pe::T, Pg::T, temp::T, ΔνD::T, line::LineParams) where T<:AF
     γ = calc_γ(Pe, Pg, temp, line)
-    # return (γ * line.λ₀^2/(4π*c))/calc_ΔλD(temp, ξ, line)
-    return γ / (4.0 * π * calc_ΔνD(temp, ξ, line))
+    return γ / (4.0 * π * ΔνD)
 end
 
 """
