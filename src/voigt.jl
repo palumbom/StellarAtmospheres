@@ -49,13 +49,8 @@ function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
 
     # put it all together and return
     # factor = sqrt(π) * e^2/(me * c^2) * line.λ₀^2 * f / ΔλD
-    factor = sqrt(π) * e^2/(me * c) * f / ΔνD
+    factor = π * e^2/(me * c) * f
     return factor * voigt(u, a, ΔνD)
-end
-
-function norm_voigt(a,  ΔλD)
-    f = t -> voigt(t, a,  ΔλD)
-    return quadgk(f, -Inf, Inf)[1]
 end
 
 """
@@ -72,7 +67,7 @@ end
 function calc_a(Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
     γ = calc_γ(Pe, Pg, temp, line)
     # return (γ * line.λ₀^2/(4π*c))/calc_ΔλD(temp, ξ, line)
-    return γ / (4π * calc_ΔνD(temp, ξ, line))
+    return γ / (4.0 * π * calc_ΔνD(temp, ξ, line))
 end
 
 """
@@ -102,7 +97,7 @@ end
 Natural broadening damping factor. Gray Eq. 11.15 and subsequent text.
 """
 function calc_γn(line::LineParams)
-    return 4π * sum(line.A)
+    return 4.0 * π * sum(line.A)
 end
 
 """
