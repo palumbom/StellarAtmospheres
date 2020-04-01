@@ -31,12 +31,12 @@ end
 
 See Gray Eq. 11.46
 """
-function calc_α(λ::T, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
-    return line(λ, Pe, Pg, temp, ξ)
+function calc_α(λ::T, temp::T, Pe::T, Pg::T, ξ::T, line::LineParams) where T<:AF
+    return line(λ, temp, Pe, Pg, ξ)
 end
 
-function calc_α(λ::AA{T,1}, Pe::T, Pg::T, temp::T, ξ::T, line::LineParams) where T<:AF
-    return line.(λ, Pe, Pg, temp, ξ)
+function calc_α(λ::AA{T,1}, temp::T, Pe::T, Pg::T, ξ::T, line::LineParams) where T<:AF
+    return line.(λ, temp, Pe, Pg, ξ)
 end
 
 """
@@ -44,14 +44,14 @@ end
 
 See Gray Eq. 11.46
 """
-function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T) where T<:AF
+function (line::LineParams)(λ::T, temp::T, Pe::T, Pg::T, ξ::T) where T<:AF
     # we need oscillator strength & doppler factor
     f = calc_f(line)
     ΔνD = calc_ΔνD(temp, ξ, line)
 
     # first calculate u and a from params provided
     u = calc_u(λ, ΔνD, line)
-    a = calc_a(Pe, Pg, temp, ΔνD, line)
+    a = calc_a(temp, Pe, Pg, ΔνD, line)
 
     # put it all together and return
     factor = π * e^2/(me * c) * f
@@ -62,14 +62,15 @@ end
 
 """
 function calc_u(λ::T, ΔνD::T, line::LineParams) where T<:AF
+    # wavelength must be in cm here
     return (λ2ν(λ*1e-8) - line.ν₀)/(ΔνD)
 end
 
 """
 
 """
-function calc_a(Pe::T, Pg::T, temp::T, ΔνD::T, line::LineParams) where T<:AF
-    γ = calc_γ(Pe, Pg, temp, line)
+function calc_a(temp::T, Pe::T, Pg::T, ΔνD::T, line::LineParams) where T<:AF
+    γ = calc_γ(temp, Pe, Pg, line)
     return γ / (4.0 * π * ΔνD)
 end
 
@@ -87,10 +88,10 @@ end
 
 Lorentzian widths add naively. See Gray Eq. 11.44 and subsequent text.
 """
-function calc_γ(Pe::T, Pg::T, temp::T, line::LineParams) where T<:AF
+function calc_γ(temp::T, Pe::T, Pg::T, line::LineParams) where T<:AF
     γn = calc_γn(line)
-    γ4 = calc_γ4(Pe, temp, line)
-    γ6 = calc_γ6(Pg, temp, line)
+    γ4 = calc_γ4(temp, Pe, line)
+    γ6 = calc_γ6(temp, Pg, line)
     return γn + γ4 + γ6
 end
 
@@ -108,7 +109,7 @@ end
 
 Stark broadening damping factor. Gray Eq. 11.27.
 """
-function calc_γ4(Pe::T, temp::T, line::LineParams) where T<:AF
+function calc_γ4(temp::T, Pe::T, line::LineParams) where T<:AF
     return exp10(19.0 + (2.0/3.0) * line.logC4 + log10(Pe) - (5.0/6.0) * log10(temp))
 end
 
@@ -117,7 +118,7 @@ end
 
 Van der Waals broadening damping factor. Gray Eq. 11.29.
 """
-function calc_γ6(Pg::T, temp::T, line::LineParams) where T<:AF
+function calc_γ6(temp::T, Pg::T, line::LineParams) where T<:AF
     return exp10(20.0 + 0.4 * line.logC6 + log10(Pg) - 0.7 * log10(temp))
 end
 

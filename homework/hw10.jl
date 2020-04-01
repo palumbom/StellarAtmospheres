@@ -13,55 +13,60 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 # get VALIIIC atmosphere
 dfv = SA.dfv
 
-# get stuff at τ=1 surface
+# get stuff at τ=1 surface from VALIIIC
 ind = 49
 temp = dfv.T[ind]
 Pg = dfv.Pg_Ptot[ind] .* dfv.Ptot[ind]
 Pe1 = SA.P_from_nkt.(dfv.n_e[ind], temp)
 Pe = SA.calc_Pe.(temp, Pg, Pe1)
 ξ = dfv.V[49] * 1000.0 * 100 # convert km/s -> cm/s
-N_NE = 0.8609 # ground fraction
 nH = dfv.n_H[ind]
 ρ = dfv.ρ[ind]
+
+# input parameters for sodium
 f_ground = 0.8609
 f_neutral = 6.5418e-4
 m = 3.817541e-23
+na_a = SA.abundance_for_element("Na")
 
 # make LineParams object instances for NaD lines
 NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, gu=4, gl=2, logC4=-15.17)
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
-# compare some values
-SE = SA.calc_SE(5890.0, temp)
-# println("γn = " * string(SA.calc_γn(NaD2)))
-# println("log10(γ4) = " * string(log10(SA.calc_γ4(Pe, temp, NaD2))))
-# println("log10(γ6) = " * string(log10(SA.calc_γ6(Pg, temp, NaD2))))
-# println("ΔλD = " * string(SA.calc_ΔλD(temp, ξ, NaD2)))
-# println("SE factor = " * string(SE))
+derp = SA.calc_α(5890.0, temp, Pe, Pg, ξ, NaD2) * f_ground * f_neutral * na_a * nH * SA.calc_SE(5890.0, temp) / ρ
+@show derp
 
-# get alpha and convert to opacity
-alph = SA.calc_α(5890.0, Pe, Pg, temp, ξ, NaD2)
-opac = alph * f_ground * f_neutral * SA.abundance_for_element("Na") * nH * SE/ ρ
+# calculate sodium opacities as function of lambda
+waves = range(5888.0, 5898.0, length=5000)
+stime = SA.calc_SE.(waves, temp)
+κ_na1 = SA.calc_α(waves, temp, Pe, Pg, ξ, NaD1) .* f_ground .* f_neutral .* na_a .* nH .* stime ./ ρ
+κ_na2 = SA.calc_α(waves, temp, Pe, Pg, ξ, NaD2) .* f_ground .* f_neutral .* na_a .* nH .* stime ./ ρ
+κcont = SA.κ_tot.(waves, temp, Pe, Pg)
+κ_tot = κ_na1 + κ_na2 + κcont
 
-waves = range(5880.0, 5900.0, length=1000)
-alpha = SA.calc_α(waves, Pe, Pg, temp, ξ, NaD2)
-opacity  = alpha .* f_ground .* f_neutral .* SA.abundance_for_element("Na") .* nH .* SE ./ ρ
-plt.plot(waves, opacity)
+# plot it
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(waves, κ_na1, "r-.", label=L"{\rm Na\ I\ D}_1")
+ax1.plot(waves, κ_na2, "r--", label=L"{\rm Na\ I\ D}_2")
+ax1.plot(waves, κcont, "b:", label=L"{\rm Continuous}")
+ax1.plot(waves, κ_tot, "k-", label=L"{\rm Total}")
+ax1.set_xlabel(L"{\rm Wavelength}\ ({\rm \AA})")
+ax1.set_ylabel(L"{\rm Opacity}\ ({\rm cm}^2\ {\rm g}^{-1})")
+ax1.legend()
+fig.savefig(outdir*"hw10_kappa.pdf")
+plt.clf(); plt.close()
 
-# # continuous opacity
-# PT = (1.0 + SA.ΦT(temp, "H")/Pe)
-# pg = SA.sum_abundance_weights()
-# κcont = SA.κ_tot(5890.0, temp, Pe, Pg)
-# κHmbf = SA.κ_H_minus_bf(5890.0, temp, Pe) * SE / PT / pg
-# κHmff = SA.κ_H_minus_ff(5890.0, temp, Pe) / PT / pg
-# κHbf = SA.κ_H_bf(5890.0, temp, Pe) * SE / PT / pg
-# κHff = SA.κ_H_ff(5890.0, temp, Pe) * SE / PT / pg
-# κe = SA.κ_e(Pe, Pg) / pg
-
-# # print them
-# @show κcont
-# @show κHmbf
-# @show κHmff
-# @show κHbf
-# @show κHff
-# @show κe
+# plot it
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.set_yscale("log")
+ax1.plot(waves, κ_na1, "r-.", label=L"{\rm Na\ I\ D}_1")
+ax1.plot(waves, κ_na2, "r--", label=L"{\rm Na\ I\ D}_2")
+ax1.plot(waves, κcont, "b:", label=L"{\rm Continuous}")
+ax1.plot(waves, κ_tot, "k-", label=L"{\rm Total}")
+ax1.set_xlabel(L"{\rm Wavelength}\ ({\rm \AA})")
+ax1.set_ylabel(L"{\rm Opacity}\ ({\rm cm}^2\ {\rm g}^{-1})")
+ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc="lower left", ncol=2, mode="expand", borderaxespad=0.)
+fig.savefig(outdir*"hw10_log_kappa.pdf")
+plt.clf(); plt.close()
