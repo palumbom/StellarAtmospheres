@@ -33,9 +33,6 @@ na_a = SA.abundance_for_element("Na")
 NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, gu=4, gl=2, logC4=-15.17)
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
-derp = SA.calc_α(5890.0, temp, Pe, Pg, ξ, NaD2) * f_ground * f_neutral * na_a * nH * SA.calc_SE(5890.0, temp) / ρ
-@show derp
-
 # calculate sodium opacities as function of lambda
 waves = range(5888.0, 5898.0, length=5000)
 stime = SA.calc_SE.(waves, temp)
