@@ -25,10 +25,9 @@ nH = dfv.n_H[ind]
 
 # get neutral and ground fraction
 f_neutral = SA.neutral_fraction(temp, Pe, "Na")
-f_ground = (2.0/exp10(SA.calc_partition(temp, "Na"))) * exp(SA.χ(1, "Na")/(8.617e-5 * temp))
+f_ground = (2.0/exp10(SA.calc_partition(temp, "Na"))) # equation 1.18
 
 # input parameters for sodium
-f_ground = 0.8609
 m = 3.817541e-23
 na_a = SA.abundance_for_element("Na")
 
