@@ -161,7 +161,7 @@ function κ_tot(λ::T, temp::T, Pe::T, Pg::T) where T<:AF
     return tot/sum_abundance_weights()
 end
 
-function  κ_tot(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1}) where T<:AF
+function κ_tot(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1}) where T<:AF
     return mapreduce((x,y,z) -> κ_tot.(λ, x, y, z), hcat, temp, Pe, Pg)
 end
 
@@ -169,35 +169,24 @@ end
 
 See Gray Eq. 11.53
 """
-function κ_line(λ::T, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T, line::LineParams) where T<:Real
-    return line(λ, Pe, Pg, temp, ξ, N_Ne)
+# !!!! TODO: SEMI-HARDCODED FOR SODIUM RN WATCH OUT !!!!
+function κ_line(λ::T, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LineParams) where T<:AF
+    # get stim. emission terms, etc.
+    f_neutral = neutral_fraction(temp, Pe, line.element)
+    f_ground = line.gl / exp10(calc_partition(temp, line.element)) # equation 1.18
+    stime = calc_SE(λ, temp)
+    abund = abundance_for_element(line.element)
+
+    # get absorption cross section & convert units to opacity
+    α = line(λ, temp, Pe, Pg, ξ)
+    return α * f_ground * f_neutral * stime * abund * nH / ρ
 end
 
-function κ_line(λ::AA{T,1}, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T, line::LineParams) where T<:Real
-    return line.(λ, Pe, Pg, temp, ξ, N_Ne)
+function κ_line(λ::AA{T,1}, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LineParams) where T<:AF
+    return map(x -> κ_line(x, temp, Pe, Pg, ξ, nH, ρ, line), λ)
 end
 
-function (line::LineParams)(λ::T, Pe::T, Pg::T, temp::T, ξ::T, N_Ne::T) where T<:Real
-    # first calculate u and a from params provided
-    u = calc_u(λ, temp, ξ, line)
-    a = calc_a(Pe, Pg, temp, ξ, line)
-
-    # now we need oscillator strength & doppler factor
-    f = calc_f(line)
-    ΔνD = calc_ΔνD(temp, ξ, line)
-
-    # get abundance and sum of abundance-weighted masses
-    A_term = abundance_for_element(line.element) / sum_abundance_weights()
-
-    # get stimulated emission factor
-    SE = calc_SE(λ, temp)
-
-    # now return it
-    return 1.497e-2 * (voigt(u,a)/ΔνD) * A_term * f * N_Ne * calc_SE(λ, temp)
-end
-
-function calc_SE(λ::T, temp::T) where T<:AF
-    θ = temp_to_theta(temp)
-    χλ = 1.2398e4/λ
-    return one(T) - exp10(-χλ * θ)
+function κ_line(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1},
+                ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams) where T<:AF
+    return mapreduce((x,y,z,a,b,c) -> κ_line(λ, x, y, z, a, b, c, line), hcat, temp, Pe, Pg, ξ, nH, ρ)
 end

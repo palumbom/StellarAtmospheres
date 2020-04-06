@@ -101,3 +101,12 @@ function species_fraction(temp::T, Pe::T, species::String; ion::String="Zeroth")
         return n2n1/((one(T)/n1n0) + one(T) + n2n1)
     end
 end
+
+"""
+
+"""
+function calc_SE(λ::T, temp::T) where T<:AF
+    θ = temp_to_theta(temp)
+    χλ = 1.2398e4/λ
+    return one(T) - exp10(-χλ * θ)
+end
