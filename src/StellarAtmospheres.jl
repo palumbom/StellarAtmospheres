@@ -39,6 +39,6 @@ export Bν, Bλ, Bν̃, λmax, νmax,
        Cν, Iν₀, IνEB, ℱν₀,
        ℱντ, ℱτ, ℱνEB, Hν₀,
        HνEB, SB, LineParams,
-       κ_tot, κ_line
+       κ_tot, κ_line, asum
 
 end # module

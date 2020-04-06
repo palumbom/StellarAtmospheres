@@ -43,12 +43,15 @@ NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, g
 # total opacity
 κ_tot = κcont .+ κ_na1 .+ κ_na2
 
+# evaluate midpoints
+ρ_mid = asum(ρ) ./ 2.0
+τ_mid = asum(τ_500) ./ 2.0
+
 # calculate optical depth
 Δh = reverse(diff(reverse(h)))
-τs = zeros(length(λs), length(h)-1)
-τs[:,1] = κ_tot[:, 1] .* ρ[1] .* Δh[1]
-for i in 2:size(τs,2)
-    τs[:, i] = sum(κ_tot[:, 1:i] .* ρ[1:i]' .* Δh[1:i]', dims=2)
+τs = zeros(length(λs), length(Δh))
+for i in eachindex(Δh)
+    τs[:, i] = sum(κ_tot[:, 1:i] .* ρ_mid[1:i]' .* Δh[1:i]', dims=2)
 end
 
 # plot calc tau against wavelength
@@ -56,11 +59,11 @@ extent = [λs[1], λs[end], 1e-7, 1.0]
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.set_yscale("log")
-img = ax1.contourf(λs, τ_500[1:end-1], log10.(τs'))
+img = ax1.contourf(λs, τ_mid, log10.(τs'))
 cbr = fig.colorbar(img)
 cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
-ax1.set_ylabel(L"tau_{500}")
+ax1.set_ylabel(L"\tau_{500}")
 ax1.set_ylim(5e-8, 2.0)
 fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
