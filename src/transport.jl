@@ -71,6 +71,13 @@ function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN]
     return (2.0 * π) .* trap_int(f1, τs, ntrap=ntrap, logx=false, err=err)
 end
 
+function ℱν₀(Sν::Function; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN]) where T<:Real
+    @assert !isnan(ntrap)
+    f1 = x -> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x)
+    return (2.0 * π) .* quadgk(f1, 0.0, inf)[1]
+end
+
+
 
 function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1, quad::Bool=false) where T<:Real
     @assert τs[1] <= τ <= τs[2]

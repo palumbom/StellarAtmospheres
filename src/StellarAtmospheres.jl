@@ -10,6 +10,9 @@ module StellarAtmospheres
 const AA = AbstractArray
 const AF = AbstractFloat
 
+# some modules for global use
+using RecursiveArrayTools
+
 # bring in constants and thermal stuff
 include("constants.jl")
 include("LineParams.jl")
