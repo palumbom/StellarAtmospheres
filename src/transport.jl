@@ -78,7 +78,6 @@ function ℱν₀(Sν::Function; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[Na
 end
 
 
-
 function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1, quad::Bool=false) where T<:Real
     @assert τs[1] <= τ <= τs[2]
 

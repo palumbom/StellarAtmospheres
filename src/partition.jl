@@ -2,11 +2,11 @@
 
 """
 function temp_to_theta(temp::T) where T<:Real
-    return 5040.0/(temp)
+    return 5039.78/(temp)
 end
 
 function theta_to_temp(θ::T) where T<:Real
-    return 5040.0/θ
+    return 5039.78/θ
 end
 
 """
@@ -33,6 +33,6 @@ function calc_partition(temp::T, species::String) where T<:AF
 
     # now do the interpolation
     ninds = .!isnan.(Ps)
-    spl = Spline1D(θs[ninds], Ps[ninds])
+    spl = Spline1D(θs[ninds], exp10.(Ps[ninds]), k=1) # linear interp log debug
     return spl(temp_to_theta(temp))
 end

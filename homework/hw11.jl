@@ -24,10 +24,10 @@ h = (dfv.h .+ 75) .* 1000.0 .* 100 # convert km -> cm
 
 # get neutral and ground fraction
 f_neutral = SA.neutral_fraction.(temp, Pe, "Na")
-f_ground = 2.0 ./ exp10.(SA.calc_partition.(temp, "Na")) # equation 1.18
+f_ground = 2.0 ./ SA.calc_partition.(temp, "Na") # equation 1.18
 
 # wavelength range generator + continuum opacities
-λs = range(5886.0, 5900.0, length=1000)
+λs = range(5888.0, 5898.0, length=500)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 
 # make LineParams object instances for NaD lines
@@ -43,28 +43,30 @@ NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, g
 # total opacity
 κ_tot = κcont .+ κ_na1 .+ κ_na2
 
-# evaluate midpoints
-ρ_mid = asum(ρ) ./ 2.0
-τ_mid = asum(τ_500) ./ 2.0
+# get Δh and midpoints for rho and tau
+Δh = -diff(h)
+ρ_mid = elav(ρ)
+τ_mid = elav(τ_500)
 
-# calculate optical depth
-Δh = reverse(diff(reverse(h)))
-τs = zeros(length(λs), length(Δh))
+# get dtau at each level
+dτ = zeros(length(λs), length(Δh))
 for i in eachindex(Δh)
-    τs[:, i] = sum(κ_tot[:, 1:i] .* ρ_mid[1:i]' .* Δh[1:i]', dims=2)
+    dτ[:, i] = κ_tot[:, i] .* ρ_mid[i]' .* Δh[i]'
 end
 
+# cumulative sum (remember to transpose)
+τν = cumsum(dτ', dims=1)
+
 # plot calc tau against wavelength
-extent = [λs[1], λs[end], 1e-7, 1.0]
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.set_yscale("log")
-img = ax1.contourf(λs, τ_mid, log10.(τs'))
+img = ax1.contourf(λs, τ_mid, log10.(τν))
 cbr = fig.colorbar(img)
 cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
 ax1.set_ylabel(L"\tau_{500}")
-ax1.set_ylim(5e-8, 2.0)
+ax1.set_ylim(1e-5, 5.0)
 fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
 

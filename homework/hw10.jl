@@ -17,15 +17,14 @@ dfv = SA.dfv
 ind = 49
 temp = dfv.T[ind]
 Pg = dfv.Pg_Ptot[ind] .* dfv.Ptot[ind]
-Pe1 = SA.P_from_nkt.(dfv.n_e[ind], temp)
-Pe = SA.calc_Pe.(temp, Pg, Pe1)
-ξ = dfv.V[49] * 1000.0 * 100 # convert km/s -> cm/s
+Pe = SA.P_from_nkt.(dfv.n_e[ind], temp)
+ξ = dfv.V[ind] * 1000.0 * 100 # convert km/s -> cm/s
 nH = dfv.n_H[ind]
 ρ = dfv.ρ[ind]
 
 # get neutral and ground fraction
 f_neutral = SA.neutral_fraction(temp, Pe, "Na")
-f_ground = (2.0/exp10(SA.calc_partition(temp, "Na"))) # equation 1.18
+f_ground = 2.0/SA.calc_partition(temp, "Na") # equation 1.18
 
 # input parameters for sodium
 m = 3.817541e-23

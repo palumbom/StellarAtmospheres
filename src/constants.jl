@@ -5,6 +5,7 @@ const R = 1.0968e5
 const e = 4.80320425e-10
 const σB = 5.670374419e-5
 const kB = 1.38064852e-16
+const kBev = 0.0
 const eV = 6.2415e11
 const α0 = 1.0449e-26
 const mp = 1.67262192369e-24
