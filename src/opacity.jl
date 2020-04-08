@@ -173,7 +173,7 @@ See Gray Eq. 11.53
 function κ_line(λ::T, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LineParams) where T<:AF
     # get stim. emission terms, etc.
     f_neutral = neutral_fraction(temp, Pe, line.element)
-    f_ground = line.gl / calc_partition(temp, line.element) # equation 1.18
+    f_ground = line.gl / exp10(calc_partition(temp, line.element)) # equation 1.18
     stime = calc_SE(λ, temp)
     abund = abundance_for_element(line.element)
 

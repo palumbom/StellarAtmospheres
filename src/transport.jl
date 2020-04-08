@@ -14,13 +14,18 @@ end
 
 Compute the source function at τ and frequency ν as the Planck Function with Teff.
 """
-
 function SνPlanck(τ::T; Teff::T=NaN, ν::AA{T,1}=[NaN], kwargs...) where T<:Real
     @assert !isnan(Teff)
     @assert sum(isnan.(ν)) == 0
     @assert all(ν .>= 0.0)
     Ts = Tτ(τ, Teff=Teff)
     return Bν.(ν, Ts)
+end
+
+function SνPlanck(ν::T, τ::T; Teff::T=NaN) where T<:AF
+    @assert !isnan(Teff)
+    Ts = Tτ(τ, Teff=Teff)
+    return Bν(ν, Ts)
 end
 
 """
@@ -71,10 +76,16 @@ function ℱν₀(Sν::Function, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN]
     return (2.0 * π) .* trap_int(f1, τs, ntrap=ntrap, logx=false, err=err)
 end
 
-function ℱν₀(Sν::Function; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN]) where T<:Real
-    @assert !isnan(ntrap)
-    f1 = x -> Sν(x, an=an, ν=ν, Teff=Teff) .* expint(2, x)
-    return (2.0 * π) .* quadgk(f1, 0.0, inf)[1]
+"""
+
+"""
+function ℱν₀_line(ν::T, spl::Spline2D, τs::Tuple{T,T}; Teff::T=NaN) where T<:Real
+    # function to integrate
+    function f1(t)
+        τν = spl(t, ν2λ(ν)/1e-8)
+        return SνPlanck(ν, τν, Teff=Teff) * expint(2, τν)
+    end
+    return (2.0 * π) .* quadgk(f1, τs[1], τs[2])[1]
 end
 
 

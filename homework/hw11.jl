@@ -19,15 +19,11 @@ Pe = SA.P_from_nkt.(ne, temp)
 Pg = dfv.Pg_Ptot .* dfv.Ptot
 ξ = dfv.V .* 1000.0 .* 100 # convert km/s -> cm/s
 ρ = dfv.ρ
-h = (dfv.h .+ 75) .* 1000.0 .* 100 # convert km -> cm
+h = dfv.h .* 1000.0 .* 100 # convert km -> cm
 τ_500 = dfv.τ_500
 
-# get neutral and ground fraction
-f_neutral = SA.neutral_fraction.(temp, Pe, "Na")
-f_ground = 2.0 ./ SA.calc_partition.(temp, "Na") # equation 1.18
-
 # wavelength range generator + continuum opacities
-λs = range(5888.0, 5898.0, length=500)
+λs = range(5886.0, 5900.0, length=500)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 
 # make LineParams object instances for NaD lines
@@ -55,20 +51,44 @@ for i in eachindex(Δh)
 end
 
 # cumulative sum (remember to transpose)
-τν = cumsum(dτ', dims=1)
+τν = cumsum(dτ, dims=2)
 
 # plot calc tau against wavelength
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.set_yscale("log")
-img = ax1.contourf(λs, τ_mid, log10.(τν))
+img = ax1.contourf(λs, τ_mid, log10.(τν'))
 cbr = fig.colorbar(img)
 cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
 ax1.set_ylabel(L"\tau_{500}")
-ax1.set_ylim(1e-5, 5.0)
+ax1.set_ylim(1e-7, 5.0)
 fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
+
+# plot it another way
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.set_yscale("log")
+for i in eachindex(τ_mid)
+    ax1.plot(λs, τν[:,i])
+end
+ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
+ax1.set_ylabel(L"\tau_\nu")
+fig.savefig(outdir * "hw11_tau_line.pdf")
+plt.clf(); plt.close()
+
+# now do emergent flux
+# Tsun = 5777.0
+# spl = Spline2D(τ_mid, λs, τν')
+# τbounds = (minimum(τ_500), maximum(τ_500))
+
+# the_flux = similar(λs)
+# for i in eachindex(λs)
+#     the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
+# end
+
+# plt.plot(λs, the_flux); plt.show()
 
 # get NaD lines
 # flux = ℱν₀()

@@ -23,11 +23,11 @@ include("integrate.jl")
 # include("gauss_legendre.jl")
 include("differentiate.jl")
 include("axis_strings.jl")
+include("partition.jl")
 include("thermal.jl")
 include("data_tables.jl")
 include("abundances.jl")
 include("ionizations.jl")
-include("partition.jl")
 include("opacity.jl")
 include("pressure.jl")
 include("transport.jl")
@@ -40,6 +40,6 @@ export Bν, Bλ, Bν̃, λmax, νmax,
        ℱντ, ℱτ, ℱνEB, Hν₀,
        HνEB, SB, LineParams,
        κ_tot, κ_line, asum,
-       elav
+       elav, ℱν₀_line
 
 end # module

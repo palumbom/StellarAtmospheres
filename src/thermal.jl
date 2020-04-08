@@ -63,8 +63,8 @@ function ΦT(temp::T, species::String; ion::Symbol=:First) where T<:AF
 
     # now do the math
     θ = temp_to_theta(temp)
-    U0 = calc_partition(temp, species)
-    U1 = calc_partition(temp, ionspec)
+    U0 = exp10.(calc_partition(temp, species))
+    U1 = exp10.(calc_partition(temp, ionspec))
     return 1.2020e9 * U1 * θ^(-5.0/2.0) * exp10(-θ * χ(species, ion)) / U0
 end
 

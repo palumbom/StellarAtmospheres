@@ -33,6 +33,6 @@ function calc_partition(temp::T, species::String) where T<:AF
 
     # now do the interpolation
     ninds = .!isnan.(Ps)
-    spl = Spline1D(θs[ninds], exp10.(Ps[ninds]), k=1) # linear interp log debug
+    spl = Spline1D(θs[ninds], Ps[ninds], k=1) # linear interp log debug
     return spl(temp_to_theta(temp))
 end
