@@ -79,16 +79,13 @@ fig.savefig(outdir * "hw11_tau_line.pdf")
 plt.clf(); plt.close()
 
 # now do emergent flux
-# Tsun = 5777.0
-# spl = Spline2D(τ_mid, λs, τν')
-# τbounds = (minimum(τ_500), maximum(τ_500))
+Tsun = 5777.0
+spl = Spline2D(τ_mid, λs, τν')
+τbounds = (minimum(τ_500), maximum(τ_500))
 
-# the_flux = similar(λs)
-# for i in eachindex(λs)
-#     the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
-# end
+the_flux = similar(λs)
+for i in eachindex(λs)
+    the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
+end
 
-# plt.plot(λs, the_flux); plt.show()
-
-# get NaD lines
-# flux = ℱν₀()
+plt.plot(λs, the_flux); plt.show()
