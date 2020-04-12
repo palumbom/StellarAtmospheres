@@ -1,8 +1,7 @@
 using Pkg; Pkg.activate(".")
-using Debugger
-using Revise
 using Dierckx
 using BenchmarkTools
+using Revise
 using StellarAtmospheres; SA = StellarAtmospheres;
 using LaTeXStrings
 import PyPlot; plt = PyPlot; mpl = plt.matplotlib;
@@ -24,7 +23,7 @@ h = dfv.h .* 1000.0 .* 100 # convert km -> cm
 τ_500 = dfv.τ_500
 
 # wavelength range generator + continuum opacities
-λs = range(5886.0, 5900.0, length=500)
+λs = range(5886.0, 5900.0, length=1000)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 
 # make LineParams object instances for NaD lines
@@ -34,8 +33,8 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # sodium opacities
-κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
-κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
+κ_na1 = κ_line(λs, temp[49], Pe[49], Pg[49], ξ[49], nH[49], ρ[49], NaD1)
+κ_na2 = κ_line(λs, temp[49], Pe[49], Pg[49], ξ[49], nH[49], ρ[49], NaD2)
 
 # total opacity
 κ_tot = (κcont .+ κ_na1 .+ κ_na2)'
@@ -59,16 +58,8 @@ plt.clf(); plt.close()
 
 # now do emergent flux
 Tsun = 5777.0
-spl = Spline2D(λs, τ_mid, τν)#, kx=3, ky=3)
+spl = Spline2D(τ_mid, λs, τν)#, kx=3, ky=3)
 τbounds = (minimum(τ_500), maximum(τ_500))
-
-# # manually do the integral
-# νs = λ2ν.(λs .* 1e-8)
-# F0 = similar(νs)
-# for i in eachindex(νs)
-#     ys = SνPlanck.(νs[i], τν[:,i], Teff=Tsun) .* expint.(2, τν[:,i])
-#     F0[i] = 2π .* trap_int(τν[:,i], ys)
-# end
 
 # extend spline method to handle tuples
 (spl::Spline2D)(t::Tuple{T,T}) where T<:Real = spl(t[1], t[2])
@@ -90,9 +81,9 @@ ax1.set_ylim(1e-7, 5.0)
 fig.savefig(outdir * "hw11_tau_image2.pdf")
 plt.clf(); plt.close()
 
-# the_flux = similar(λs)
-# for i in eachindex(λs)
-#     the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
-# end
+the_flux = similar(λs)
+for i in eachindex(λs)
+    the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
+end
 
-# plt.plot(λs, the_flux); plt.show()
+plt.plot(λs, the_flux); plt.show()
