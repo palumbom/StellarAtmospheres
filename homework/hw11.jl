@@ -33,8 +33,8 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # sodium opacities
-κ_na1 = κ_line(λs, temp[49], Pe[49], Pg[49], ξ[49], nH[49], ρ[49], NaD1)
-κ_na2 = κ_line(λs, temp[49], Pe[49], Pg[49], ξ[49], nH[49], ρ[49], NaD2)
+κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
+κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
 
 # total opacity
 κ_tot = (κcont .+ κ_na1 .+ κ_na2)'
