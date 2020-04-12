@@ -1,4 +1,5 @@
 using Pkg; Pkg.activate(".")
+using Debugger
 using Revise
 using Dierckx
 using BenchmarkTools
@@ -37,27 +38,17 @@ NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, g
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
 
 # total opacity
-κ_tot = κcont .+ κ_na1 .+ κ_na2
+κ_tot = (κcont .+ κ_na1 .+ κ_na2)'
 
-# get Δh and midpoints for rho and tau
-Δh = -diff(h)
-ρ_mid = elav(ρ)
+# calculate τν
 τ_mid = elav(τ_500)
-
-# get dtau at each level
-dτ = zeros(length(λs), length(Δh))
-for i in eachindex(Δh)
-    dτ[:, i] = κ_tot[:, i] .* ρ_mid[i]' .* Δh[i]'
-end
-
-# cumulative sum (remember to transpose)
-τν = cumsum(dτ, dims=2)
+τν = calc_τν(κ_tot, ρ, h)
 
 # plot calc tau against wavelength
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.set_yscale("log")
-img = ax1.contourf(λs, τ_mid, log10.(τν'))
+img = ax1.contourf(λs, τ_mid, log10.(τν))
 cbr = fig.colorbar(img)
 cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
@@ -66,26 +57,42 @@ ax1.set_ylim(1e-7, 5.0)
 fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
 
-# plot it another way
+# now do emergent flux
+Tsun = 5777.0
+spl = Spline2D(λs, τ_mid, τν)#, kx=3, ky=3)
+τbounds = (minimum(τ_500), maximum(τ_500))
+
+# # manually do the integral
+# νs = λ2ν.(λs .* 1e-8)
+# F0 = similar(νs)
+# for i in eachindex(νs)
+#     ys = SνPlanck.(νs[i], τν[:,i], Teff=Tsun) .* expint.(2, τν[:,i])
+#     F0[i] = 2π .* trap_int(τν[:,i], ys)
+# end
+
+# extend spline method to handle tuples
+(spl::Spline2D)(t::Tuple{T,T}) where T<:Real = spl(t[1], t[2])
+
+# finer grid
+λnew = λs
+τnew = range(minimum(τ_500), maximum(τ_500), length=1000)
+τνnew = map(spl, ((x,y) for x in τnew, y in λnew))
+
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.set_yscale("log")
-for i in eachindex(τ_mid)
-    ax1.plot(λs, τν[:,i])
-end
+img = ax1.contourf(λnew, τnew, log10.(τνnew))
+cbr = fig.colorbar(img)
+cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
-ax1.set_ylabel(L"\tau_\nu")
-fig.savefig(outdir * "hw11_tau_line.pdf")
+ax1.set_ylabel(L"\tau_{500}")
+ax1.set_ylim(1e-7, 5.0)
+fig.savefig(outdir * "hw11_tau_image2.pdf")
 plt.clf(); plt.close()
 
-# now do emergent flux
-Tsun = 5777.0
-spl = Spline2D(τ_mid, λs, τν')
-τbounds = (minimum(τ_500), maximum(τ_500))
+# the_flux = similar(λs)
+# for i in eachindex(λs)
+#     the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
+# end
 
-the_flux = similar(λs)
-for i in eachindex(λs)
-    the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
-end
-
-plt.plot(λs, the_flux); plt.show()
+# plt.plot(λs, the_flux); plt.show()

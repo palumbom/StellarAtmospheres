@@ -29,6 +29,24 @@ function SνPlanck(ν::T, τ::T; Teff::T=NaN) where T<:AF
 end
 
 """
+
+"""
+function calc_τν(κν::AA{T,1}, ρ::AA{T,1}, h::AA{T,1}) where T<:AF
+    # finite differencing + midpoints
+    Δh = -diff(h)
+    ρmid = elav(ρ)
+    κmid = elav(κν)
+
+    # calculate + return cumulative sum
+    dτ = κmid .* ρmid .* Δh
+    return cumsum(dτ)
+end
+
+function calc_τν(κν::AA{T,2}, ρ::AA{T,1}, h::AA{T,1}) where T<:AF
+    return mapreduce(x -> calc_τν(x, ρ, h), hcat, (κν[:,i] for i in 1:size(κν,2)))
+end
+
+"""
     Cν(Sν, τ; μ=1.0, Teff=NaN, ν=[NaN], an=[NaN])
 
 Compute the contribution function at optical depth τ and and disk position

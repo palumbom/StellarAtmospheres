@@ -14,9 +14,9 @@ version = "3.5.0+3"
 
 [[ArrayInterface]]
 deps = ["LinearAlgebra", "Requires", "SparseArrays"]
-git-tree-sha1 = "3ffa20ffa495e9a4c823cb026164d8c0f95f72aa"
+git-tree-sha1 = "b34d74dc877e6083c4c5c553a685e89e10ea4662"
 uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
-version = "2.6.2"
+version = "2.8.3"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -87,6 +87,11 @@ git-tree-sha1 = "6d56f927b33d3820561b8f89d7de311718683846"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.5.2"
 
+[[Crayons]]
+git-tree-sha1 = "cb7a62895da739fe5bb43f1a26d4292baf4b3dc0"
+uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
+version = "4.0.1"
+
 [[DataAPI]]
 git-tree-sha1 = "674b67f344687a88310213ddfa8a2b3c76cc4252"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
@@ -100,9 +105,9 @@ version = "0.20.0"
 
 [[DataStructures]]
 deps = ["InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "73eb18320fe3ba58790c8b8f6f89420f0a622773"
+git-tree-sha1 = "4dead20a1606a60292529023d6eac18a1ef6432e"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.17.11"
+version = "0.17.12"
 
 [[DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -112,6 +117,12 @@ version = "1.0.0"
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
+
+[[Debugger]]
+deps = ["CodeTracking", "Crayons", "Highlights", "InteractiveUtils", "JuliaInterpreter", "Markdown", "REPL"]
+git-tree-sha1 = "0b5e62b2ec174866953276bbd384c2154f178642"
+uuid = "31a5f54b-26ea-5ae9-a837-f05ce5417438"
+version = "0.6.4"
 
 [[DelimitedFiles]]
 deps = ["Mmap"]
@@ -132,6 +143,12 @@ deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "
 git-tree-sha1 = "55e1de79bd2c397e048ca47d251f8fa70e530550"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
 version = "0.22.6"
+
+[[DocStringExtensions]]
+deps = ["LibGit2", "Markdown", "Pkg", "Test"]
+git-tree-sha1 = "88bb0edb352b16608036faadcc071adda068582a"
+uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+version = "0.8.1"
 
 [[FFMPEG]]
 deps = ["BinaryProvider", "Libdl"]
@@ -174,6 +191,12 @@ deps = ["ColorTypes", "FixedPointNumbers", "LinearAlgebra", "StaticArrays"]
 git-tree-sha1 = "78f0ce9d01993b637a8f28d84537d75dc0ce8eef"
 uuid = "4d00f742-c7ba-57c2-abde-4428a4b178cb"
 version = "0.7.10"
+
+[[Highlights]]
+deps = ["DocStringExtensions", "InteractiveUtils", "REPL"]
+git-tree-sha1 = "f823a2d04fb233d52812c8024a6d46d9581904a4"
+uuid = "eafb193a-b7ab-5a9e-9068-77385905fa72"
+version = "0.4.5"
 
 [[InteractiveUtils]]
 deps = ["Markdown"]
@@ -257,10 +280,10 @@ uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "0.3.3"
 
 [[OpenBLAS_jll]]
-deps = ["Libdl", "Pkg"]
-git-tree-sha1 = "cbab167006bbb875d4b4204cc4da8822bd43df83"
+deps = ["CompilerSupportLibraries_jll", "Libdl", "Pkg"]
+git-tree-sha1 = "2ee3e636e94b9fd95fa8364d5cba2e20dae16609"
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.9+1"
+version = "0.3.9+2"
 
 [[OpenSpecFun_jll]]
 deps = ["CompilerSupportLibraries_jll", "Libdl", "Pkg"]
@@ -292,9 +315,9 @@ uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
 [[PlotThemes]]
 deps = ["PlotUtils", "Requires", "Statistics"]
-git-tree-sha1 = "493bd54296a33d7575f5f7e488d30ffd9d05dc45"
+git-tree-sha1 = "87a4ea7f8c350d87d3a8ca9052663b633c0b2722"
 uuid = "ccf2f8ad-2431-5c83-bf29-c5338b663b6a"
-version = "1.0.2"
+version = "1.0.3"
 
 [[PlotUtils]]
 deps = ["Colors", "Dates", "Printf", "Random", "Reexport"]

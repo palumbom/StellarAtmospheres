@@ -40,6 +40,7 @@ export Bν, Bλ, Bν̃, λmax, νmax,
        ℱντ, ℱτ, ℱνEB, Hν₀,
        HνEB, SB, LineParams,
        κ_tot, κ_line, asum,
-       elav, ℱν₀_line
+       elav, ℱν₀_line, expint,
+       trap_int, calc_τν
 
 end # module
