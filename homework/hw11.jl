@@ -11,7 +11,7 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # get VALIIIc on interpolated grid
-hnew = range()
+hnew = range(2543.0, -75.0, length=1000)
 val_new = SA.interp_valIIIc(hnew)
 
 # assign VALIIIc variables for convenience
@@ -26,7 +26,7 @@ h = val_new.h .* 1000.0 .* 100 # convert km -> cm
 τ_500 = val_new.τ_500
 
 # wavelength range generator + continuum opacities
-λs = range(5886.0, 5900.0, length=500)
+λs = range(5886.0, 5900.0, length=200)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 
 # make LineParams object instances for NaD lines
@@ -61,9 +61,13 @@ plt.clf(); plt.close()
 
 # now do emergent flux
 Tsun = 5777.0
+νs = λ2ν.(λs .* 1e-8)
+τ_bounds = (minimum(τ_500), maximum(τ_500))
 the_flux = similar(λs)
 for i in eachindex(λs)
-    the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), τν[:,i], τ_mid, Teff=Tsun)
+    spl = Spline1D(τ_mid, τν[:,i])
+    # the_flux[i] = ℱν₀_line(νs[i], τν[:,i], τ_mid, Teff=Tsun)
+    the_flux[i] = ℱν₀_line(νs[i], spl, τ_bounds, Teff=Tsun)
 end
 
 # plot it
