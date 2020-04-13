@@ -39,9 +39,6 @@ NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, g
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
 
-# κ_na2 = κ_line(5890.0, temp, Pe, Pg, ξ, nH, ρ, NaD2)
-# τtest = calc_τν(κ_na2, ρ, h)
-
 # total opacity
 κ_tot = (κcont .+ κ_na1 .+ κ_na2)'
 
