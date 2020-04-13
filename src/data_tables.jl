@@ -105,27 +105,22 @@ end
 
 const dfv = tabulate_VALIIIc()
 
-function interp_valIIIc(h::AA{T,1}) where T<:Real
-    @assert all(diff(h) .>= 0.0)
-    h_old = reverse(dfv[!, :h] .+ 75.0) .* 1000.0 .* 100
+function interp_valIIIc(;npoints::Int=1000) where T<:Real
+    # make hnew
+    hnew = range(dfv.h[1], dfv.h[end], length=npoints)
 
     # pre-make df
     dfv_new = DataFrame()
-    dfv_new.h = reverse(h)
-
-    # do temp linearly
-    spl = Spline1D(h_old, reverse(dfv[!, :T]), k=1)
-    dfv_new[!, :T] = spl(h)
+    dfv_new.h = hnew
 
     # interpolate on each variable in old df
     for key in names(dfv)
         # pass on h
         key == :h && continue
-        key == :T && continue
 
         # interpolate
-        spl = Spline1D(h_old, reverse(dfv[!, key]))
-        dfv_new[!, key] = spl(h)
+        spl = Spline1D(reverse(dfv[!, :h]), reverse(dfv[!, key]), k=1)
+        dfv_new[!, key] = spl(hnew)
     end
     return dfv_new
 end

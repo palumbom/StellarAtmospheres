@@ -10,20 +10,23 @@ import PyPlot; plt = PyPlot; mpl = plt.matplotlib;
 outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
-# get VALIIIc stuff
-dfv = SA.dfv
-temp = dfv.T
-ne = dfv.n_e
-nH = dfv.n_H
+# get VALIIIc on interpolated grid
+npoints = 1000
+val_new = SA.interp_valIIIc(npoints=npoints)
+
+# assign VALIIIc variables for convenience
+temp = val_new.T
+ne = val_new.n_e
+nH = val_new.n_H
 Pe = SA.P_from_nkt.(ne, temp)
-Pg = dfv.Pg_Ptot .* dfv.Ptot
-ξ = dfv.V .* 1000.0 .* 100 # convert km/s -> cm/s
-ρ = dfv.ρ
-h = dfv.h .* 1000.0 .* 100 # convert km -> cm
-τ_500 = dfv.τ_500
+Pg = val_new.Pg_Ptot .* val_new.Ptot
+ξ = val_new.V .* 1000.0 .* 100 # convert km/s -> cm/s
+ρ = val_new.ρ
+h = val_new.h .* 1000.0 .* 100 # convert km -> cm
+τ_500 = val_new.τ_500
 
 # wavelength range generator + continuum opacities
-λs = range(5886.0, 5900.0, length=1000)
+λs = range(5886.0, 5900.0, length=500)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 
 # make LineParams object instances for NaD lines
@@ -56,34 +59,34 @@ ax1.set_ylim(1e-7, 5.0)
 fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
 
-# now do emergent flux
-Tsun = 5777.0
-spl = Spline2D(τ_mid, λs, τν)#, kx=3, ky=3)
-τbounds = (minimum(τ_500), maximum(τ_500))
+# # now do emergent flux
+# Tsun = 5777.0
+# spl = Spline2D(τ_mid, λs, τν)#, kx=3, ky=3)
+# τbounds = (minimum(τ_500), maximum(τ_500))
 
-# extend spline method to handle tuples
-(spl::Spline2D)(t::Tuple{T,T}) where T<:Real = spl(t[1], t[2])
+# # extend spline method to handle tuples
+# (spl::Spline2D)(t::Tuple{T,T}) where T<:Real = spl(t[1], t[2])
 
-# finer grid
-λnew = λs
-τnew = range(minimum(τ_500), maximum(τ_500), length=1000)
-τνnew = map(spl, ((x,y) for x in τnew, y in λnew))
+# # finer grid
+# λnew = λs
+# τnew = range(minimum(τ_500), maximum(τ_500), length=1000)
+# τνnew = map(spl, ((x,y) for x in τnew, y in λnew))
 
-fig = plt.figure()
-ax1 = fig.add_subplot()
-ax1.set_yscale("log")
-img = ax1.contourf(λnew, τnew, log10.(τνnew))
-cbr = fig.colorbar(img)
-cbr.set_label(L"\log\tau_\nu")
-ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
-ax1.set_ylabel(L"\tau_{500}")
-ax1.set_ylim(1e-7, 5.0)
-fig.savefig(outdir * "hw11_tau_image2.pdf")
-plt.clf(); plt.close()
+# fig = plt.figure()
+# ax1 = fig.add_subplot()
+# ax1.set_yscale("log")
+# img = ax1.contourf(λnew, τnew, log10.(τνnew))
+# cbr = fig.colorbar(img)
+# cbr.set_label(L"\log\tau_\nu")
+# ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
+# ax1.set_ylabel(L"\tau_{500}")
+# ax1.set_ylim(1e-7, 5.0)
+# fig.savefig(outdir * "hw11_tau_image2.pdf")
+# plt.clf(); plt.close()
 
-the_flux = similar(λs)
-for i in eachindex(λs)
-    the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
-end
+# the_flux = similar(λs)
+# for i in eachindex(λs)
+#     the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), spl, τbounds, Teff=Tsun)
+# end
 
-plt.plot(λs, the_flux); plt.show()
+# plt.plot(λs, the_flux); plt.show()
