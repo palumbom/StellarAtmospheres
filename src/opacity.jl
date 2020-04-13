@@ -188,5 +188,5 @@ end
 
 function κ_line(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1},
                 ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams) where T<:AF
-    return mapreduce((x,y,z,a,b,c) -> κ_line(λ, x, y, z, a, b, c, line), hcat, temp, Pe, Pg, ξ, nH, ρ)
+    return reduce(hcat, map((x,y,z,a,b,c) -> κ_line(λ, x, y, z, a, b, c, line), temp, Pe, Pg, ξ, nH, ρ))
 end

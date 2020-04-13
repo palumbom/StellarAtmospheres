@@ -97,15 +97,19 @@ end
 """
 
 """
-function ℱν₀_line(ν::T, spl::Spline2D, τs::Tuple{T,T}; Teff::T=NaN) where T<:Real
-    # function to integrate
-    function f1(t)
-        τν = spl(t, ν2λ(ν)/1e-8)
-        return SνPlanck(ν, τν, Teff=Teff) * expint(2, τν)
-    end
-    return (2.0 * π) .* quadgk(f1, τs[1], τs[2])[1]
-end
+# function ℱν₀_line(ν::T, spl::Spline2D, τs::Tuple{T,T}; Teff::T=NaN) where T<:Real
+#     # function to integrate
+#     function f1(t)
+#         τν = spl(t, ν2λ(ν)/1e-8)
+#         return SνPlanck(ν, τν, Teff=Teff) * expint(2, τν)
+#     end
+#     return (2.0 * π) .* quadgk(f1, τs[1], τs[2])[1]
+# end
 
+function ℱν₀_line(ν::T, τν::AA{T,1}, τ_500::AA{T,1}; Teff::T=NaN) where T<:Real
+
+    return (2.0 * π) .* derp
+end
 
 function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1, quad::Bool=false) where T<:Real
     @assert τs[1] <= τ <= τs[2]
