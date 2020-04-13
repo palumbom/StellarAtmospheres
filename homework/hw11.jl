@@ -11,7 +11,7 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # get VALIIIc on interpolated grid
-hnew = range(2543.0, -75.0, length=1000)
+hnew = range(2543.0, -75.0, length=1200)
 val_new = SA.interp_valIIIc(hnew)
 
 # assign VALIIIc variables for convenience
@@ -26,7 +26,7 @@ h = val_new.h .* 1000.0 .* 100 # convert km -> cm
 τ_500 = val_new.τ_500
 
 # wavelength range generator + continuum opacities
-λs = range(5886.0, 5900.0, length=200)
+λs = range(5886.0, 5900.0, length=250)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 
 # make LineParams object instances for NaD lines
@@ -38,6 +38,9 @@ NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, g
 # sodium opacities
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
+
+# κ_na2 = κ_line(5890.0, temp, Pe, Pg, ξ, nH, ρ, NaD2)
+# τtest = calc_τν(κ_na2, ρ, h)
 
 # total opacity
 κ_tot = (κcont .+ κ_na1 .+ κ_na2)'
@@ -65,7 +68,7 @@ Tsun = 5777.0
 τ_bounds = (minimum(τ_500), maximum(τ_500))
 the_flux = similar(λs)
 for i in eachindex(λs)
-    spl = Spline1D(τ_mid, τν[:,i])
+    spl = Spline1D(τ_mid, τν[:,i], k=1)
     # the_flux[i] = ℱν₀_line(νs[i], τν[:,i], τ_mid, Teff=Tsun)
     the_flux[i] = ℱν₀_line(νs[i], spl, τ_bounds, Teff=Tsun)
 end

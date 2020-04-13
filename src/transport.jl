@@ -103,7 +103,7 @@ function ℱν₀_line(ν::T, spl::Spline1D, τs::Tuple{T,T}; Teff::T=NaN) where
         τν = spl(t)
         return SνPlanck(ν, τν, Teff=Teff) * expint(2, τν)
     end
-    return (2.0 * π) .* quadgk(f1, τs[1], τs[2])[1]
+    return (2.0 * π) .* quadgk(f1, 0.0, τs[2])[1]
 end
 
 function ℱν₀_line(ν::T, τν::AA{T,1}, τ_500::AA{T,1}; Teff::T=NaN) where T<:Real

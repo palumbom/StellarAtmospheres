@@ -182,6 +182,11 @@ function κ_line(λ::T, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LinePa
     return α * f_ground * f_neutral * stime * abund * nH / ρ
 end
 
+function κ_line(λ::T, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1},
+                ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams) where T<:AF
+    return map((x,y,z,a,b,c) -> κ_line(λ, x, y, z, a, b, c, line), temp, Pe, Pg, ξ, nH, ρ)
+end
+
 function κ_line(λ::AA{T,1}, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LineParams) where T<:AF
     return map(x -> κ_line(x, temp, Pe, Pg, ξ, nH, ρ, line), λ)
 end
