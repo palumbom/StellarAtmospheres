@@ -107,8 +107,9 @@ end
 # end
 
 function ℱν₀_line(ν::T, τν::AA{T,1}, τ_500::AA{T,1}; Teff::T=NaN) where T<:Real
-
-    return (2.0 * π) .* derp
+    xs = τν
+    ys = SνPlanck.(ν, τν, Teff=Teff) .* expint.(2, τν)
+    return (2.0 * π) .* trap_int(xs, ys)
 end
 
 function ℱντ(Sν::Function, τ::T, τs::Tuple{T,T}; Teff::T=NaN, an::AA{T,1}=[NaN], ν::AA{T,1}=[NaN], ntrap::Int=1, quad::Bool=false) where T<:Real

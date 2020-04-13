@@ -105,10 +105,15 @@ end
 
 const dfv = tabulate_VALIIIc()
 
-function interp_valIIIc(;npoints::Int=1000) where T<:Real
+function interp_valIIIc(;npoints::Int=1000)
     # make hnew
-    hnew = range(dfv.h[1], dfv.h[end], length=npoints)
+    ind = 1
+    hnew = range(dfv.h[ind], dfv.h[end], length=npoints)
+    return interp_valIIIc(hnew)
+end
 
+
+function interp_valIIIc(hnew::AA{T,1}) where T<:Real
     # pre-make df
     dfv_new = DataFrame()
     dfv_new.h = hnew

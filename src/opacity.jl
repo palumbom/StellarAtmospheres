@@ -162,7 +162,7 @@ function κ_tot(λ::T, temp::T, Pe::T, Pg::T) where T<:AF
 end
 
 function κ_tot(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1}) where T<:AF
-    return mapreduce((x,y,z) -> κ_tot.(λ, x, y, z), hcat, temp, Pe, Pg)
+    return reduce(hcat, map((x,y,z) -> κ_tot.(λ, x, y, z), temp, Pe, Pg))
 end
 
 """

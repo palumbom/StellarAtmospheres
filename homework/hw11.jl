@@ -11,8 +11,8 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # get VALIIIc on interpolated grid
-npoints = 500
-val_new = SA.interp_valIIIc(npoints=npoints)
+hnew = range()
+val_new = SA.interp_valIIIc(hnew)
 
 # assign VALIIIc variables for convenience
 temp = val_new.T
@@ -61,10 +61,16 @@ plt.clf(); plt.close()
 
 # now do emergent flux
 Tsun = 5777.0
-
 the_flux = similar(λs)
 for i in eachindex(λs)
-    the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), τν, τ_mid, τbounds, Teff=Tsun)
+    the_flux[i] = ℱν₀_line(λ2ν(λs[i]*1e-8), τν[:,i], τ_mid, Teff=Tsun)
 end
 
-# plt.plot(λs, the_flux); plt.show()
+# plot it
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(λs, the_flux)
+ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
+ax1.set_ylabel(L"\mathcal{F}_\nu(0)\ {\rm cgs}")
+fig.savefig(outdir * "hw11_emergent_flux.pdf")
+plt.clf(); plt.close()
