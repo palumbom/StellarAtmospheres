@@ -11,7 +11,9 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # get VALIIIc on interpolated grid
-hnew = range(2543.0, -75.0, length=1200)
+hnew = range(2543.0, -75.0, length=50)
+hnew = SA.dfv.h
+hnew = range(2200.0, -75.0, step=-25.0)
 val_new = SA.interp_valIIIc(hnew)
 
 # assign VALIIIc variables for convenience
@@ -20,13 +22,13 @@ ne = val_new.n_e
 nH = val_new.n_H
 Pe = SA.P_from_nkt.(ne, temp)
 Pg = val_new.Pg_Ptot .* val_new.Ptot
-ξ = val_new.V .* 1000.0 .* 100 # convert km/s -> cm/s
+ξ = val_new.V .* 1000.0 .* 100.0 # convert km/s -> cm/s
 ρ = val_new.ρ
-h = val_new.h .* 1000.0 .* 100 # convert km -> cm
+h = val_new.h .* 1000.0 .* 100.0 # convert km -> cm
 τ_500 = val_new.τ_500
 
 # wavelength range generator + continuum opacities
-λs = range(5886.0, 5900.0, length=250)
+λs = range(5886.0, 5900.0, length=300)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 
 # make LineParams object instances for NaD lines
@@ -59,16 +61,27 @@ ax1.set_ylim(1e-7, 5.0)
 fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
 
-# now do emergent flux
+# explicit
 Tsun = 5777.0
 νs = λ2ν.(λs .* 1e-8)
-τ_bounds = (minimum(τ_500), maximum(τ_500))
 the_flux = similar(λs)
 for i in eachindex(λs)
-    spl = Spline1D(τ_mid, τν[:,i], k=1)
-    # the_flux[i] = ℱν₀_line(νs[i], τν[:,i], τ_mid, Teff=Tsun)
-    the_flux[i] = ℱν₀_line(νs[i], spl, τ_bounds, Teff=Tsun)
+    delta_τ = diff(τν[:,i])
+    sfunc = SA.SνPlanck.(νs[i], τν[:,i], Teff=Tsun) .* SA.expint.(2, τν[:,i])
+    the_flux[i] = 2π * sum(elav(sfunc) .* delta_τ)
 end
+
+
+# now do emergent flux
+# Tsun = 5777.0
+# νs = λ2ν.(λs .* 1e-8)
+# τ_bounds = (minimum(τ_500), maximum(τ_500))
+# the_flux = similar(λs)
+# for i in eachindex(λs)
+#     spl = Spline1D(τ_mid, τν[:,i], k=1)
+#     the_flux[i] = ℱν₀_line(νs[i], τν[:,i], τ_mid, Teff=Tsun)
+#     # the_flux[i] = ℱν₀_line(νs[i], spl, τ_bounds, Teff=Tsun)
+# end
 
 # plot it
 fig = plt.figure()
