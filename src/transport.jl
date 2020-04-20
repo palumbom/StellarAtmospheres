@@ -31,19 +31,15 @@ end
 """
 
 """
-function calc_τν(κν::AA{T,1}, ρ::AA{T,1}, h::AA{T,1}) where T<:AF
+function calc_τν(κν::AA{T,N}, ρ::AA{T,1}, h::AA{T,1}) where {T<:AF, N}
     # finite differencing + midpoints
     Δh = -diff(h)
     ρmid = elav(ρ)
-    κmid = elav(κν)
+    κmid = elav(κν, dims=1)
 
     # calculate + return cumulative sum
     dτ = κmid .* ρmid .* Δh
-    return cumsum(dτ)
-end
-
-function calc_τν(κν::AA{T,2}, ρ::AA{T,1}, h::AA{T,1}) where T<:AF
-    return mapreduce(x -> calc_τν(x, ρ, h), hcat, (κν[:,i] for i in 1:size(κν,2)))
+    return cumsum(dτ, dims=1)
 end
 
 """

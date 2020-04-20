@@ -2,6 +2,7 @@
 using CSV
 using Dierckx
 using DataFrames
+using Interpolations
 
 # directory path for the data
 datdir = abspath((@__DIR__) * "/../data/")
@@ -116,7 +117,7 @@ end
 function interp_valIIIc(hnew::AA{T,1}) where T<:Real
     # pre-make df
     dfv_new = DataFrame()
-    dfv_new.h = hnew
+    dfv_new.h = hnew .* 1e5
 
     # interpolate on each variable in old df
     for key in names(dfv)
@@ -124,8 +125,9 @@ function interp_valIIIc(hnew::AA{T,1}) where T<:Real
         key == :h && continue
 
         # interpolate
-        spl = Spline1D(reverse(dfv[!, :h]), reverse(dfv[!, key]), k=1)
-        dfv_new[!, key] = spl(hnew)
+        # spl = Spline1D(reverse(dfv[!, :h]), reverse(dfv[!, key]), k=1)
+        spl = LinearInterpolation(reverse(dfv[!, :h]) .* 1e5, reverse(dfv[!, key]))
+        dfv_new[!, key] = spl(dfv_new.h)
     end
     return dfv_new
 end
