@@ -73,8 +73,8 @@ end
 Calculate the neutral fraction of an element. Only consider 1st ionization.
 """
 function neutral_fraction(temp::T, Pe::T, species::String) where T<:AF
-    frac = ΦT(temp, species) / Pe
-    return (one(T)/frac)/((one(T)/frac) + one(T))
+    frac = Pe/ΦT(temp, species)
+    return frac/(frac + one(T))
 end
 
 function species_fraction(temp::T, Pe::T, species::String; ion::String="Zeroth") where T<:AF

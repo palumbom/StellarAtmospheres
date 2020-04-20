@@ -2,7 +2,9 @@
 using CSV
 using Dierckx
 using DataFrames
-using Interpolations
+# using Interpolations
+# using PyCall
+# interp1d = pyimport("scipy.interpolate").interp1d
 
 # directory path for the data
 datdir = abspath((@__DIR__) * "/../data/")
@@ -125,8 +127,7 @@ function interp_valIIIc(hnew::AA{T,1}) where T<:Real
         key == :h && continue
 
         # interpolate
-        # spl = Spline1D(reverse(dfv[!, :h]), reverse(dfv[!, key]), k=1)
-        spl = LinearInterpolation(reverse(dfv[!, :h]) .* 1e5, reverse(dfv[!, key]))
+        spl = Spline1D(reverse(dfv[!, :h]) .* 1e5, reverse(dfv[!, key]), k=1)
         dfv_new[!, key] = spl(dfv_new.h)
     end
     return dfv_new

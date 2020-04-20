@@ -35,6 +35,11 @@ function calc_α(λ::T, temp::T, Pe::T, Pg::T, ξ::T, line::LineParams) where T<
     return line(λ, temp, Pe, Pg, ξ)
 end
 
+# function calc_α(λ::T, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1}, ξ::AA{T,1}, line::LineParams) where T<:AF
+#     map(x -> line(λ, x,))
+#     return line(λ, temp, Pe, Pg, ξ)
+# end
+
 function calc_α(λ::AA{T,1}, temp::T, Pe::T, Pg::T, ξ::T, line::LineParams) where T<:AF
     return line.(λ, temp, Pe, Pg, ξ)
 end
