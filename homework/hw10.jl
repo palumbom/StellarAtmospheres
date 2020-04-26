@@ -1,7 +1,9 @@
 using Pkg; Pkg.activate(".")
-using Revise
 using Dierckx
 using BenchmarkTools
+using DataFrames
+using CSV
+# using Revise
 using StellarAtmospheres; SA = StellarAtmospheres;
 using LaTeXStrings
 import PyPlot; plt = PyPlot; mpl = plt.matplotlib;
@@ -35,12 +37,22 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # calculate sodium opacities as function of lambda
-waves = range(5888.0, 5898.0, length=5000)
+waves = range(5888.0, 5898.0, step=0.01)
 stime = SA.calc_SE.(waves, temp)
 κ_na1 = SA.calc_α(waves, temp, Pe, Pg, ξ, NaD1) .* f_ground .* f_neutral .* na_a .* nH .* stime ./ ρ
 κ_na2 = SA.calc_α(waves, temp, Pe, Pg, ξ, NaD2) .* f_ground .* f_neutral .* na_a .* nH .* stime ./ ρ
 κcont = SA.κ_tot.(waves, temp, Pe, Pg)
 κ_tot = κ_na1 + κ_na2 + κcont
+
+# write to file
+df = DataFrame()
+df.wavelength = waves
+df.kappa_na1 = κ_na1
+df.kappa_na2 = κ_na2
+df.kappa_cont = κcont
+df.kapp_tot = κ_tot
+
+CSV.write("/Users/michael/Desktop/opacities.csv", df, delim=",")
 
 # plot it
 fig = plt.figure()

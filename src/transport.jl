@@ -38,7 +38,7 @@ function calc_τν(κν::AA{T,N}, ρ::AA{T,1}, h::AA{T,1}) where {T<:AF, N}
     κmid = elav(κν, dims=1)
 
     # calculate + return cumulative sum
-    dτ = κmid .* ρmid .* Δh
+    dτ = (κmid .* ρmid) .* Δh
     return cumsum(dτ, dims=1)
 end
 

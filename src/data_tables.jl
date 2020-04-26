@@ -127,7 +127,7 @@ function interp_valIIIc(hnew::AA{T,1}) where T<:Real
         key == :h && continue
 
         # interpolate
-        spl = Spline1D(reverse(dfv[!, :h]) .* 1e5, reverse(dfv[!, key]), k=1)
+        spl = Spline1D(reverse(dfv[!, :h]) .* 1e5, reverse(dfv[!, key]), k=1, bc="error")
         dfv_new[!, key] = spl(dfv_new.h)
     end
     return dfv_new

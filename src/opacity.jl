@@ -162,8 +162,16 @@ function κ_tot(λ::T, temp::T, Pe::T, Pg::T) where T<:AF
 end
 
 function κ_tot(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1}) where T<:AF
-    return reduce(hcat, map((x,y,z) -> κ_tot.(λ, x, y, z), temp, Pe, Pg))
+    out = zeros(length(temp), length(λ))
+    for i in eachindex(λ)
+        out[:,i] = κ_tot.(λ[i], temp, Pe, Pg)
+    end
+    return out
 end
+
+# function κ_tot(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1}) where T<:AF
+#     return reduce(hcat, map((x,y,z) -> κ_tot.(λ, x, y, z), temp, Pe, Pg))
+# end
 
 """
 
@@ -193,5 +201,10 @@ end
 
 function κ_line(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1},
                 ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams) where T<:AF
-    return reduce(hcat, map((x,y,z,a,b,c) -> κ_line(λ, x, y, z, a, b, c, line), temp, Pe, Pg, ξ, nH, ρ))
+    # allocate memory
+    out = zeros(length(temp), length(λ))
+    for i in eachindex(λ)
+        out[:,i] = κ_line(λ[i], temp, Pe, Pg, ξ, nH, ρ, line)
+    end
+    return out
 end
