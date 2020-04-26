@@ -31,6 +31,14 @@ end
 """
 
 """
+function Tτ(τ::T; Teff::T=NaN) where T<:AF
+    @assert !isnan(Teff)
+    return Teff * (0.75 * (τ + (2.0/3.0)))^0.25
+end
+
+"""
+
+"""
 function calc_τν(κν::AA{T,N}, ρ::AA{T,1}, h::AA{T,1}) where {T<:AF, N}
     # finite differencing + midpoints
     Δh = -diff(h)

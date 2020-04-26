@@ -12,7 +12,7 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # get VALIIIc on interpolated grid
 val_old = SA.dfv
-val_new = SA.interp_valIIIc(npoints=2000)
+val_new = SA.interp_valIIIc(npoints=1000)
 
 # old quantities
 temp_old = val_old.T
@@ -33,7 +33,7 @@ Pe = SA.P_from_nkt.(ne, temp)
 Pg = val_new.Pg_Ptot .* val_new.Ptot
 ξ = val_new.V .* 1000.0 .* 100.0 # convert km/s -> cm/s
 ρ = val_new.ρ
-h = val_new.h #.* 1000.0 .* 100.0 # convert km -> cm
+h = val_new.h .* 1000.0 .* 100.0 # convert km -> cm
 τ_500 = val_new.τ_500
 
 # wavelength range generator + continuum opacities
@@ -69,24 +69,20 @@ ax1.set_ylim(1e-7, 5.0)
 fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
 
-# # explicit
-# Tsun = 5777.0
-# νs = λ2ν.(λs .* 1e-8)
-# the_flux = similar(λs)
-# for i in eachindex(λs)
-#     delta_τ = diff(τν[:,i])
-#     sfunc = SA.SνPlanck.(νs[i], τν[:,i], Teff=Tsun) .* SA.expint.(2, τν[:,i])
-#     the_flux[i] = 2π * sum(elav(sfunc) .* delta_τ)
-# end
+# explicit Milne integral
+Tsun = 5777.0
+νs = λ2ν.(λs .* 1e-8)
+the_flux = similar(νs)
+for i in eachindex(νs)
+    ys = SA.SνPlanck.(νs[i], τν[:,i], Teff=Tsun) .* SA.expint.(2, τν[:,i])
+    the_flux[i] = SA.trap_int(τν[:,i], ys)
+end
 
-# # delta_τ = diff(τν, dims=1)
-# # sfunc = SA.SνPlanck.(νs[i], τν[:,i], Teff=Tsun) .* SA.expint.(2, τν[:,i])
-
-# # plot it
-# fig = plt.figure()
-# ax1 = fig.add_subplot()
-# ax1.plot(λs, the_flux)
-# ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
-# ax1.set_ylabel(L"\mathcal{F}_\nu(0)\ {\rm cgs}")
-# fig.savefig(outdir * "hw11_emergent_flux.pdf")
-# plt.clf(); plt.close()
+# plot it
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(λs, the_flux)
+ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
+ax1.set_ylabel(L"\mathcal{F}_\nu(0)\ {\rm cgs}")
+fig.savefig(outdir * "hw11_emergent_flux.pdf")
+plt.clf(); plt.close()

@@ -25,14 +25,6 @@ SB(T::t) where t<:Real = σB * T^4
 """
 
 """
-function Tτ(τ::T; Teff::T=NaN) where T<:AF
-    @assert !isnan(Teff)
-    return Teff * (0.75 * (τ + (2.0/3.0)))^0.25
-end
-
-"""
-
-"""
 function P_from_nkt(n::T, temp::T) where T<:AF
     return n * kB * temp
 end

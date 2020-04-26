@@ -132,3 +132,28 @@ function interp_valIIIc(hnew::AA{T,1}) where T<:Real
     end
     return dfv_new
 end
+
+# function interp_valIIIc(;npoints::Int=1000)
+#     # make hnew
+#     ind = 2
+#     τnew = logspace(dfv.τ_500[ind], dfv.τ_500[end]-0.001, length=npoints)
+#     return interp_valIIIc(τnew)
+# end
+
+
+# function interp_valIIIc(τnew::AA{T,1}) where T<:Real
+#     # pre-make df
+#     dfv_new = DataFrame()
+#     dfv_new.τ_500 = τnew
+
+#     # interpolate on each variable in old df
+#     for key in names(dfv)
+#         # pass on h
+#         key == :τ_500 && continue
+
+#         # interpolate
+#         spl = Spline1D(dfv.τ_500, dfv[!, key], k=1, bc="error")
+#         dfv_new[!, key] = spl(dfv_new.τ_500)
+#     end
+#     return dfv_new
+# end
