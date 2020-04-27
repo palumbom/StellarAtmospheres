@@ -86,3 +86,71 @@ ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
 ax1.set_ylabel(L"\mathcal{F}_\nu(0)\ {\rm cgs}")
 fig.savefig(outdir * "hw11_emergent_flux.pdf")
 plt.clf(); plt.close()
+
+
+# plot stuff to diagnose
+ind = findfirst(λs .== 5890.0)
+the_κ = κ_tot[:,ind]
+the_τ = τν[:,ind]
+the_S = SA.SνPlanck.(νs[ind], the_τ, Teff=Tsun)
+the_e = SA.expint.(2, the_τ)
+the_i = the_S .* the_e
+
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(h, the_κ)
+ax1.set_xlabel("height (cm)")
+ax1.set_ylabel("total opacity")
+fig.savefig("/Users/michael/Desktop/opac.pdf")
+plt.clf(); plt.close()
+
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(elav(h), the_τ)
+ax1.set_xlabel("height midpoint (cm)")
+ax1.set_ylabel("tau nu")
+fig.savefig("/Users/michael/Desktop/tau.pdf")
+plt.clf(); plt.close()
+
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(elav(h), the_S)
+ax1.set_xlabel("height midpoint (cm)")
+ax1.set_ylabel("source func")
+fig.savefig("/Users/michael/Desktop/source.pdf")
+plt.clf(); plt.close()
+
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(elav(h), the_e)
+ax1.set_xlabel("height midpoint (cm)")
+ax1.set_ylabel("expint")
+fig.savefig("/Users/michael/Desktop/expint.pdf")
+plt.clf(); plt.close()
+
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(elav(h), the_i)
+ax1.set_xlabel("height midpoint (cm)")
+ax1.set_ylabel("milne integrand")
+fig.savefig("/Users/michael/Desktop/integrand.pdf")
+plt.clf(); plt.close()
+
+
+# confusogram
+ind2 = findfirst(isapprox.(τ_500, 1.0, atol=1e-1))
+fig, axs = plt.subplots(nrows=2, ncols=2)
+axs[1,1].plot(νs, κ_tot[ind2,:])
+axs[1,1].set_xlabel("frequency")
+axs[1,1].set_ylabel("total opac")
+axs[1,2].plot(elav(h), τν[:,ind])
+axs[1,2].set_xlabel("height")
+axs[1,2].set_ylabel("tau nu")
+axs[2,1].plot(νs, the_flux)
+axs[2,1].set_xlabel("frequency")
+axs[2,1].set_ylabel("emergent flux")
+axs[2,2].plot(elav(h), the_S)
+axs[2,2].set_xlabel("height")
+axs[2,2].set_ylabel("source function")
+fig.savefig("/Users/michael/Desktop/confuse.pdf")
+plt.clf(); plt.close()
