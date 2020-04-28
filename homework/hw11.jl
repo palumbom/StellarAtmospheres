@@ -31,7 +31,7 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # get the total opacity
-λs = range(5886.0, 5900.0, step=0.01)
+λs = range(5888.0, 5898.0, step=0.05)
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
@@ -62,12 +62,13 @@ for i in eachindex(νs)
     ys = SA.Bν.(νs[i], elav(temp)) .* SA.expint.(2, τν[:,i])
     the_flux[i] = SA.trap_int(τν[:,i], ys)
 end
+the_flux .*= 2π
 
 # plot it
 fig = plt.figure()
 ax1 = fig.add_subplot()
-ax1.plot(λs, the_flux./1e-6)
+ax1.plot(λs, the_flux./1e-5)
 ax1.set_xlabel(L"{\rm Wavelength\ (\AA)}")
-ax1.set_ylabel(L"\mathcal{F}_\nu^+ \times 10^{-6}\ ({\rm ergs\ s}^{-1}\ {\rm cm}^{-2}\ {\rm Hz}^{-1}) ")
+ax1.set_ylabel(L"\mathcal{F}_\nu^+\ (10^{-5}\ {\rm ergs\ s}^{-1}\ {\rm cm}^{-2}\ {\rm Hz}^{-1}) ")
 fig.savefig(outdir * "hw11_emergent_flux.pdf")
 plt.clf(); plt.close()
