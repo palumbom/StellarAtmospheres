@@ -12,7 +12,7 @@ mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # get VALIIIc on interpolated grid
 val_old = SA.dfv
-val_new = SA.interp_valIIIc(npoints=1000)
+val_new = SA.interp_valIIIc(npoints=1200)
 
 # old quantities
 temp_old = val_old.T
@@ -74,7 +74,7 @@ Tsun = 5777.0
 νs = λ2ν.(λs .* 1e-8)
 the_flux = similar(νs)
 for i in eachindex(νs)
-    ys = SA.SνPlanck.(νs[i], τν[:,i], Teff=Tsun) .* SA.expint.(2, τν[:,i])
+    ys = SA.Bν.(νs[i], elav(temp)) .* SA.expint.(2, τν[:,i])
     the_flux[i] = SA.trap_int(τν[:,i], ys)
 end
 
@@ -87,7 +87,7 @@ ax1.set_ylabel(L"\mathcal{F}_\nu(0)\ {\rm cgs}")
 fig.savefig(outdir * "hw11_emergent_flux.pdf")
 plt.clf(); plt.close()
 
-
+"""
 # plot stuff to diagnose
 ind = findfirst(λs .== 5890.0)
 the_κ = κ_tot[:,ind]
@@ -154,3 +154,4 @@ axs[2,2].set_xlabel("height")
 axs[2,2].set_ylabel("source function")
 fig.savefig("/Users/michael/Desktop/confuse.pdf")
 plt.clf(); plt.close()
+"""
