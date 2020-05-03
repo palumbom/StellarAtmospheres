@@ -110,7 +110,7 @@ const dfv = tabulate_VALIIIc()
 
 function interp_valIIIc(;npoints::Int=1000)
     # make hnew
-    ind = 10
+    ind = 1
     hnew = range(dfv.h[ind], dfv.h[end], length=npoints)
     return interp_valIIIc(hnew)
 end

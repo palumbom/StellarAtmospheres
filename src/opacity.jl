@@ -178,10 +178,16 @@ end
 See Gray Eq. 11.53
 """
 # !!!! TODO: SEMI-HARDCODED FOR SODIUM RN WATCH OUT !!!!
-function κ_line(λ::T, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LineParams) where T<:AF
-    # get stim. emission terms, etc.
+function κ_line(λ::T, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T,
+                line::LineParams; dep::T=one(T)) where T<:AF
+    # get lte fractions
     f_neutral = neutral_fraction(temp, Pe, line.element)
     f_ground = line.gl / exp10(calc_partition(temp, line.element)) # equation 1.18
+
+    # convert to nlte (default departure coeff is 1)
+    f_neutral *= dep
+    f_ground *= dep
+
     stime = calc_SE(λ, temp)
     abund = abundance_for_element(line.element)
 
@@ -191,20 +197,23 @@ function κ_line(λ::T, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LinePa
 end
 
 function κ_line(λ::T, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1},
-                ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams) where T<:AF
-    return map((x,y,z,a,b,c) -> κ_line(λ, x, y, z, a, b, c, line), temp, Pe, Pg, ξ, nH, ρ)
+                ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams;
+                dep::AA{T,1}=ones(length(temp))) where T<:AF
+    return map((x,y,z,a,b,c,d) -> κ_line(λ, x, y, z, a, b, c, line, dep=d), temp, Pe, Pg, ξ, nH, ρ, dep)
 end
 
-function κ_line(λ::AA{T,1}, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T, line::LineParams) where T<:AF
-    return map(x -> κ_line(x, temp, Pe, Pg, ξ, nH, ρ, line), λ)
+function κ_line(λ::AA{T,1}, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T,
+                line::LineParams; dep::T=one(T)) where T<:AF
+    return map(x -> κ_line(x, temp, Pe, Pg, ξ, nH, ρ, line, dep=dep), λ)
 end
 
 function κ_line(λ::AA{T,1}, temp::AA{T,1}, Pe::AA{T,1}, Pg::AA{T,1},
-                ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams) where T<:AF
+                ξ::AA{T,1}, nH::AA{T,1}, ρ::AA{T,1}, line::LineParams;
+                dep::AA{T,1}=ones(length(temp))) where T<:AF
     # allocate memory
     out = zeros(length(temp), length(λ))
     for i in eachindex(λ)
-        out[:,i] = κ_line(λ[i], temp, Pe, Pg, ξ, nH, ρ, line)
+        out[:,i] = κ_line(λ[i], temp, Pe, Pg, ξ, nH, ρ, line, dep=dep)
     end
     return out
 end

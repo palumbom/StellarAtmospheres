@@ -1,9 +1,6 @@
 # import special function needed for voigt
 import SpecialFunctions.erfcx
 
-using PyCall
-apm = pyimport("astropy.modeling.functional_models")
-
 """
     voigt(u, a)
 
