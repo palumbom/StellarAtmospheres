@@ -19,7 +19,7 @@ function tabulate_source(dir::String=datdir)
     @assert isdir(dir)
 
     header = ["h", "S"]
-    df = CSV.read(dir * "3sdep_extrap.txt", header=header, delim=" ", ignorerepeated=true)
+    df = CSV.read(dir * "CoreS2014.txt", header=header, delim=" ", ignorerepeated=true)
     col_to_float!(df, names(df)...)
     return df
 end

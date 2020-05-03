@@ -31,7 +31,7 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # get the total opacity
-λs = range(5888.0, 5898.0, step=0.1)
+λs = range(5888.0, 5898.0, step=0.05)
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
@@ -51,7 +51,7 @@ cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ \AA}")
 ax1.set_ylabel(L"\tau_{500}")
 ax1.set_ylim(1e-7, 5.0)
-# fig.savefig(outdir * "hw11_tau_image.pdf")
+fig.savefig(outdir * "hw11_tau_image.pdf")
 plt.clf(); plt.close()
 
 # explicit Milne integral
@@ -70,5 +70,5 @@ ax1 = fig.add_subplot()
 ax1.plot(λs, the_flux./1e-5)
 ax1.set_xlabel(L"{\rm Wavelength\ (\AA)}")
 ax1.set_ylabel(L"\mathcal{F}_\nu^+\ (10^{-5}\ {\rm ergs\ s}^{-1}\ {\rm cm}^{-2}\ {\rm Hz}^{-1}) ")
-# fig.savefig(outdir * "hw11_emergent_flux.pdf")
-# plt.clf(); plt.close()
+fig.savefig(outdir * "hw11_emergent_flux.pdf")
+plt.clf(); plt.close()

@@ -185,9 +185,9 @@ function κ_line(λ::T, temp::T, Pe::T, Pg::T, ξ::T, nH::T, ρ::T,
     f_ground = line.gl / exp10(calc_partition(temp, line.element)) # equation 1.18
 
     # convert to nlte (default departure coeff is 1)
-    f_neutral *= dep
     f_ground *= dep
 
+    # get stimulated emission and abundance corrections
     stime = calc_SE(λ, temp)
     abund = abundance_for_element(line.element)
 
