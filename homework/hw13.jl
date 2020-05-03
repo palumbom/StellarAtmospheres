@@ -21,7 +21,7 @@ b = depc_df.b
 S = source_df.S
 
 # convert units of S to per Hz from per nm
-S *= 1e9 * 3e8/(λ2ν(5890.0*1e-8))^2
+S *= 10.0 * 1e9 * 3e8/(λ2ν(5890.0*1e-8))^2
 
 # get interpolated VALIIIc
 val_new = SA.interp_valIIIc(npoints=npoints)
@@ -43,27 +43,27 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # get the total opacity using departure coefficients
-λs = range(5888.0, 5898.0, step=0.5)
+λs = range(5887.0, 5899.0, step=0.05)
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1, dep=b)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2, dep=b)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
 κ_tot = (κcont .+ κ_na1 .+ κ_na2)
 
 # get LTE opacs
-# κ_na1_lte = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
-# κ_na2_lte = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
-# κ_tot_lte = (κcont .+ κ_na1_lte .+ κ_na2_lte)
+κ_na1_lte = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1)
+κ_na2_lte = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2)
+κ_tot_lte = (κcont .+ κ_na1_lte .+ κ_na2_lte)
 
 # calculate τν
 τ_mid = elav(τ_500)
 τν = calc_τν(κ_tot, ρ, h)
-# τν_lte = calc_τν(κ_tot_lte, ρ, h)
+τν_lte = calc_τν(κ_tot_lte, ρ, h)
 
 # plot calc tau against wavelength
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.set_yscale("log")
-img = ax1.contourf(λs, τ_mid, log10.(τν))
+img = ax1.contourf(λs, τ_mid, log10.(τν), levels=range(-7.5, 4.5, length=9)))
 cbr = fig.colorbar(img)
 cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ (\AA)}")
@@ -79,19 +79,25 @@ the_flux = similar(νs)
 the_flux_lte = similar(νs)
 for i in eachindex(νs)
     ys = elav(S) .* SA.expint.(2, τν[:,i])
-    # ys_lte = ys = SA.Bν.(νs[i], elav(temp)) .* SA.expint.(2, τν_lte[:,i])
+    ys_lte = SA.Bν.(νs[i], elav(temp)) .* SA.expint.(2, τν_lte[:,i])
     the_flux[i] = SA.trap_int(τν[:,i], ys)
-    # the_flux_lte[i] = SA.trap_int(τν_lte[:,i], ys_lte)
+    the_flux_lte[i] = SA.trap_int(τν_lte[:,i], ys_lte)
 end
+
+# convert to flux
 the_flux .*= 2π
-# the_flux_lte .*= 2π
+the_flux_lte .*= 2π
 
 # plot it
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.plot(λs, the_flux./1e-5, "k-", label="NLTE")
-# ax1.plot(λs, the_flux_lte./1e-5, "r:", label="LTE")
+ax1.plot(λs, the_flux_lte./1e-5, "r", alpha=0.75, label="LTE")
 ax1.set_xlabel(L"{\rm Wavelength\ (\AA)}")
-ax1.set_ylabel(SA.Bν_string())
+ax1.set_ylabel(L"\mathcal{F}_\nu^+\ " * SA.int_units_string())
+ax1.legend()
 fig.savefig(outdir * "hw13_emergent_flux.pdf")
 plt.clf(); plt.close()
+
+
+(SA.Bν(λ2ν(5890*1e-8), 5777.0) - SA.Bν(λ2ν(5896*1e-8), 5777.0))/(λ2ν(5890*1e-8) - λ2ν(5896*1e-8))
