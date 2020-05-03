@@ -11,7 +11,7 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # interpolate departure coefficients and source functions
-npoints = 1000
+npoints = 2000
 depc_df = SA.interp_nlte(SA.dfd, npoints=npoints)
 source_df = SA.interp_nlte(SA.dfs, npoints=npoints)
 
@@ -43,7 +43,7 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # get the total opacity using departure coefficients
-λs = range(5887.0, 5899.0, step=0.05)
+λs = range(5887.0, 5899.0, step=0.01)
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1, dep=b)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2, dep=b)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
@@ -63,7 +63,7 @@ NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, g
 fig = plt.figure()
 ax1 = fig.add_subplot()
 ax1.set_yscale("log")
-img = ax1.contourf(λs, τ_mid, log10.(τν), levels=range(-7.5, 4.5, length=9)))
+img = ax1.contourf(λs, τ_mid, log10.(τν), levels=range(-7.5, 4.5, length=9))
 cbr = fig.colorbar(img)
 cbr.set_label(L"\log\tau_\nu")
 ax1.set_xlabel(L"{\rm Wavelength\ (\AA)}")
@@ -99,5 +99,33 @@ ax1.legend()
 fig.savefig(outdir * "hw13_emergent_flux.pdf")
 plt.clf(); plt.close()
 
+# also plot zoom ins
+ind_mid = SA.searchsortednearest(λs, 5893.0)
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(λs[1:ind_mid], the_flux[1:ind_mid]./1e-5, "k-", label="NLTE")
+ax1.plot(λs[1:ind_mid], the_flux_lte[1:ind_mid]./1e-5, "r", alpha=0.75, label="LTE")
+ax1.set_xlabel(L"{\rm Wavelength\ (\AA)}")
+ax1.set_ylabel(L"\mathcal{F}_\nu^+\ " * SA.int_units_string())
+ax1.legend()
+fig.savefig(outdir * "hw13_emergent_d2.pdf")
+plt.clf(); plt.close()
 
-(SA.Bν(λ2ν(5890*1e-8), 5777.0) - SA.Bν(λ2ν(5896*1e-8), 5777.0))/(λ2ν(5890*1e-8) - λ2ν(5896*1e-8))
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(λs[ind_mid:end], the_flux[ind_mid:end]./1e-5, "k-", label="NLTE")
+ax1.plot(λs[ind_mid:end], the_flux_lte[ind_mid:end]./1e-5, "r", alpha=0.75, label="LTE")
+ax1.set_xlabel(L"{\rm Wavelength\ (\AA)}")
+ax1.set_ylabel(L"\mathcal{F}_\nu^+\ " * SA.int_units_string())
+ax1.legend()
+fig.savefig(outdir * "hw13_emergent_d1.pdf")
+plt.clf(); plt.close()
+
+# now replicate the rutten plot
+fig = plt.figure()
+ax1 = fig.add_subplot()
+ax1.plot(h, SA.Bν.(νs, 5777.0), "k:", label=L"B_\nu")
+ax1.set_xlabel(L"{\rm Height\ (cm)}")
+ax1.set_ylabel(L"{\rm Source\ function}\ " * SA.int_units_string())
+fig.savefig(outdir * "hw13_rutten_replica.pdf")
+plt.clf(); plt.close()

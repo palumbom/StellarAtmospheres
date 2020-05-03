@@ -40,3 +40,28 @@ function elav(a::AbstractArray{T,N}; dims::Integer) where {T,N}
     r1 = ntuple(i -> i == dims ? UnitRange(2, last(r[i])) : UnitRange(r[i]), N)
     return (view(a, r1...) .+ view(a, r0...)) ./ 2.0
 end
+
+"""Credit: traktofon @ https://discourse.julialang.org/t/findnearest-function/4143/4"""
+function searchsortednearest(a::AbstractVector, x::Real) #where T<:Real
+   idx = searchsortedfirst(a,x)
+   if (idx==1); return idx; end
+   if (idx>length(a)); return length(a); end
+   if (a[idx]==x); return idx; end
+   if (abs(a[idx]-x) < abs(a[idx-1]-x))
+      return idx
+   else
+      return idx-1
+   end
+end
+
+function searchsortednearest(x::Real, a::AbstractVector)
+   idx = searchsortedfirst(a,x)
+   if (idx==1); return idx; end
+   if (idx>length(a)); return length(a); end
+   if (a[idx]==x); return idx; end
+   if (abs(a[idx]-x) < abs(a[idx-1]-x))
+      return idx
+   else
+      return idx-1
+   end
+end
