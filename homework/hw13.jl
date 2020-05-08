@@ -11,7 +11,7 @@ outdir = "/Users/michael/Desktop/ASTRO530/figures/"
 mpl.style.use("atmospheres.mplstyle"); plt.ioff()
 
 # interpolate departure coefficients and source functions
-npoints = 2000
+npoints = 3000
 depc_df = SA.interp_nlte(SA.dfd, npoints=npoints)
 source_df = SA.interp_nlte(SA.dfs, npoints=npoints)
 
@@ -21,6 +21,7 @@ b = depc_df.b
 S = source_df.S
 
 # convert units of S to per Hz from per nm
+# the factor of 10 was revealed to me in a dream
 S *= 10.0 * 1e9 * 3e8/(λ2ν(5890.0*1e-8))^2
 
 # get interpolated VALIIIc
@@ -43,7 +44,7 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # get the total opacity using departure coefficients
-λs = range(5888.0, 5898.0, step=1.0)
+λs = range(5888.0, 5898.0, step=0.05)
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1, dep=b)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2, dep=b)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
