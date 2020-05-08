@@ -43,7 +43,7 @@ NaD2 = LineParams(element="Na", n=3, λ₀=5890.0, A=[1e8*6.16e-1/(4π)], m=m, g
 NaD1 = LineParams(element="Na", n=3, λ₀=5896.0, A=[1e8*6.14e-1/(4π)], m=m, gu=2, gl=2, logC4=-15.33)
 
 # get the total opacity using departure coefficients
-λs = range(5887.0, 5899.0, step=0.01)
+λs = range(5888.0, 5898.0, step=1.0)
 κ_na1 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD1, dep=b)
 κ_na2 = κ_line(λs, temp, Pe, Pg, ξ, nH, ρ, NaD2, dep=b)
 κcont = SA.κ_tot(λs, temp, Pe, Pg)
@@ -125,7 +125,7 @@ plt.clf(); plt.close()
 core_ind = SA.searchsortednearest(λs, 5890.0)
 the_J_wing = zeros(length(h)-1)
 the_J_core = zeros(length(h)-1)
-for i in eachindex(the_J)
+for i in eachindex(the_J_wing)
     ys = elav(S) .* SA.expint.(1, abs.(τν[:,ind_mid] .- τν[i,ind_mid]))
     ys2 = elav(S) .* SA.expint.(1, abs.(τν[:,core_ind] .- τν[i,core_ind]))
     inds = .!isinf.(ys)
